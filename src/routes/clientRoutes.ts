@@ -1,9 +1,16 @@
-import express from "express";
-var router = express.Router();
+import {Router} from "express";
+import { protect } from "../middleware/authMiddleware";
+import { authorizeRoles } from "../middleware/roleMiddleware";
+import { getClientProfile } from "../controllers/client/clientController";
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+const router = Router();
+
+// Clients can access their profile
+router.get(
+  "/profile",
+  protect,                
+  authorizeRoles("client"), 
+  getClientProfile
+);
 
 export default router;

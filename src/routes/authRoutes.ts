@@ -1,12 +1,14 @@
 
-import express from "express";
-import type { Request, Response, NextFunction } from "express";
-var router = express.Router();
+import {Router} from "express";
+import registerController from "../controllers/registerController";
+import loginController from "../controllers/loginController";
 
 
-/* GET home page. */
-router.get("/", function (req: Request, res: Response, next: NextFunction) {
-  res.render("index", { title: "Express" });
-});
+const router = Router();
+
+router.post("/register", registerController);
+router.post("/login", loginController)
 
 export default router;
+
+
