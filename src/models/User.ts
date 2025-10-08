@@ -1,8 +1,7 @@
-const mongoose = require("mongoose");
-const { v4: uuidv4 } = require("uuid");
+import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-  userId: { type: String, default: uuidv4 },
+const userSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   name: { type: String, trim: true },
   email: {
     type: String,
@@ -12,9 +11,11 @@ const UserSchema = new mongoose.Schema({
     trim: true,
   },
   password: { type: String, required: true },
-  isVerified: { type: Boolean, default: false },
+  age: { type: Number },
+  healthHistory: [{ type: String }],
+  wellness_goal: { type: String },
   tokenHash: { type: String, default: null },
   tokenExpiry: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now },
 });
-module.exports = mongoose.model("User", UserSchema);
+export default mongoose.model("User", userSchema);
