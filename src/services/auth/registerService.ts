@@ -1,8 +1,8 @@
-const bcrypt = require("bcryptjs");
-const User = require("../../models/User");
-const { generateTokenAndHash } = require("../../utils/tokenUtil");
+import bcrypt from "bcryptjs";
+import User from "../../models/User"
+import generateTokenAndHash from "../../utils/tokenUtils"
 
-async function registerUser(name, email, password) {
+async function registerUser(name: string, email: string, password: string) {
   if (!email || !password) throw new Error("Email and password required");
 
   console.log(email);
@@ -19,7 +19,7 @@ async function registerUser(name, email, password) {
 
   const { token, tokenHash } = generateTokenAndHash();
   user.tokenHash = tokenHash;
-  user.tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+  user.tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); 
   await user.save();
 
   return {
@@ -27,5 +27,4 @@ async function registerUser(name, email, password) {
     verificationToken: token,
   };
 }
-
-module.exports = registerUser;
+export default registerUser;

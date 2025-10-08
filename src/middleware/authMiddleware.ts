@@ -14,11 +14,11 @@ declare global {
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization || "";
+    const authHeader = req.headers.authorization;
     
     // Extract token from header
-    const token = authHeader.startsWith("Bearer ")
-      ? authHeader.split(" ")[1]
+    const token = authHeader?.startsWith("Bearer ")
+      ? authHeader?.split(" ")[1]
       : null;
 
     if (!token) {

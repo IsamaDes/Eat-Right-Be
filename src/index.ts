@@ -2,12 +2,11 @@ import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-
-import routes from "./routes/index";
 import { notFound, errorHandler } from "./middleware/errorMiddleware";
-import authMiddleware from "./middleware/auth";
+import authMiddleware from "./middleware/authMiddleware";
 import swaggerSpec from "./config/swagger";
 import connectDB from "./config/db";
+import apiRoutes from "./routes";
 
 dotenv.config();
 
@@ -43,7 +42,9 @@ app.get("/api/profile", authMiddleware, async (req: Request, res: Response) => {
   res.json({ profile: req.user });
 });
 
-app.use("/api", routes);
+
+
+app.use("/api", apiRoutes);
 
 // --- Error Handling ---
 app.use(errorHandler);
