@@ -6,17 +6,17 @@ const swaggerSpec = require("./config/swagger");
 const apiRoutes = require("./routes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
-app.use(
-  cors({
-    origin: [
-      "https://eat-right-fe.vercel.app",
-      "http://localhost:5173",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    credentials: true,
-    allowedHeaders: "Content-Type,Authorization"
-  })
-);
+/** @type {import('cors').CorsOptions} */
+const corsOptions = {
+  origin: true,
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+};
+
+app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
 
 
 app.use(express.json());
