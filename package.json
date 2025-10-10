@@ -4,12 +4,12 @@
   "private": true,
   "description": "Backend server for EatRight",
   "type": "module",
-  "main": "index.ts",
+  "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "rm -vfr ./build && tsc",
-    "start": "npm run build && node build/index.js"
+    "start": "npm run build && node build/server.js"
   },
   "dependencies": {
     "@react-email/components": "^0.0.14",
@@ -21,6 +21,7 @@
     "@types/react": "^18.2.14",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "dayjs": "^1.11.10",

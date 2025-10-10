@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Nutritionist from "./Nutritionist";
+import Nutritionist from "./User";
 
 const foodMenuSchema = new mongoose.Schema({
   date_created: { type: Date, default: Date.now },
