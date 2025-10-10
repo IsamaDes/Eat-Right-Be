@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import User from "../../models/User";
+import type { Request, Response } from "express";
+const User = require("../../models/User");
 
 // Extend Request type for TypeScript
 interface AuthenticatedRequest extends Request {
@@ -10,7 +10,7 @@ interface AuthenticatedRequest extends Request {
  * GET /api/admin/dashboard
  * Returns basic stats for the admin dashboard
  */
-export const getAdminDashboard = async (req: AuthenticatedRequest, res: Response) => {
+ const getAdminDashboard = async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Count users by role
     const clientCount = await User.countDocuments({ role: "client" });
@@ -35,3 +35,5 @@ export const getAdminDashboard = async (req: AuthenticatedRequest, res: Response
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+module.exports = getAdminDashboard;

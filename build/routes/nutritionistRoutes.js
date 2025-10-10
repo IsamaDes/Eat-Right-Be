@@ -1,9 +1,11 @@
-import { Router } from "express";
-import { protect } from "../middleware/authMiddleware";
-import { authorizeRoles } from "../middleware/roleMiddleware";
-import { getNutritionistProfile, getClients } from "../controllers/nutritionist/nutritionistController";
-const router = Router();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const router = express.Router();
+const { protect } = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
+const { getNutritionistProfile, getClients } = require("../controllers/nutritionist/nutritionistController");
 // Nutritionist-only routes
 router.get("/profile", protect, authorizeRoles("nutritionist"), getNutritionistProfile);
 router.get("/clients", protect, authorizeRoles("nutritionist"), getClients);
-export default router;
+module.exports = router;

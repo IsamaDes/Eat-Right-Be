@@ -1,9 +1,11 @@
-import User from "../../models/User";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const User = require("../../models/User");
 /**
  * GET /api/admin/dashboard
  * Returns basic stats for the admin dashboard
  */
-export const getAdminDashboard = async (req, res) => {
+const getAdminDashboard = async (req, res) => {
     try {
         // Count users by role
         const clientCount = await User.countDocuments({ role: "client" });
@@ -27,3 +29,4 @@ export const getAdminDashboard = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+module.exports = getAdminDashboard;

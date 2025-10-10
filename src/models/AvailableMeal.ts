@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoosePkg = require("mongoose"); 
+const mongoose = mongoosePkg;
 
 const availableMealSchema = new mongoose.Schema(
   {
@@ -14,4 +15,5 @@ const availableMealSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("AvailableMeal", availableMealSchema);
+module.exports = mongoose.model("AvailableMeal", availableMealSchema);
+

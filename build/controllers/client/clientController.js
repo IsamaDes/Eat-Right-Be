@@ -1,9 +1,11 @@
-import User from "../../models/User";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const User = require("../../models/User");
 /**
  * GET /api/client/profile
  * Returns the logged-in client's profile
  */
-export const getClientProfile = async (req, res) => {
+const getClientProfile = async (req, res) => {
     try {
         const userId = req.user._id;
         const client = await User.findById(userId).select("-password -tokenHash -tokenExpiry");
@@ -20,3 +22,4 @@ export const getClientProfile = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+module.exports = getClientProfile;

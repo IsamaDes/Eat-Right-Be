@@ -1,10 +1,12 @@
-import express from "express";
-import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./config/swagger";
-import apiRoutes from "./routes";
-import { notFound, errorHandler } from "./middleware/errorMiddleware";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
 const app = express();
+const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
+const apiRoutes = require("./routes");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 app.use(cors({
     origin: [
         "https://todo-frontend-rosy-five.vercel.app",
@@ -20,4 +22,4 @@ app.get("/", (req, res) => res.send("API is running"));
 app.use("/api", apiRoutes);
 app.use(errorHandler);
 app.use(notFound);
-export default app;
+module.exports = app;

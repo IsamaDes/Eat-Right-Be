@@ -1,4 +1,7 @@
-import mongoose from "mongoose";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoosePkg = require("mongoose");
+const mongoose = mongoosePkg;
 const kitchenSchema = new mongoose.Schema({
     location: { type: String, required: true },
     number_of_chefs: { type: Number, default: 0 },
@@ -7,4 +10,4 @@ const kitchenSchema = new mongoose.Schema({
     ],
     client_meal: { type: String },
 }, { timestamps: true });
-export default mongoose.model("Kitchen", kitchenSchema);
+module.exports = mongoose.model("Kitchen", kitchenSchema);

@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Middleware for handling 404 Not Found errors
  */
@@ -32,4 +34,9 @@ const errorHandler = (err, req, res, next) => {
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
     });
 };
-export { notFound, invalidCredentials, badRequest, errorHandler };
+module.exports = {
+    notFound,
+    invalidCredentials,
+    badRequest,
+    errorHandler
+};

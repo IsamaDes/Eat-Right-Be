@@ -1,8 +1,10 @@
-import { Router } from "express";
-import { protect } from "../middleware/authMiddleware";
-import { authorizeRoles } from "../middleware/roleMiddleware";
-import { getAdminDashboard } from "../controllers/admin/adminController";
-const router = Router();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const router = express.Router();
+const { protect } = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
+const getAdminDashboard = require("../controllers/admin/adminController");
 // Only admins can access dashboard
 router.get("/dashboard", protect, // User must be logged in
 authorizeRoles("admin"), // User must be admin
@@ -11,4 +13,4 @@ getAdminDashboard);
 router.get("/profile", protect, (req, res) => {
     res.json({ message: "This is the admin profile page", user: req.user });
 });
-export default router;
+module.exports = router;

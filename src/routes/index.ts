@@ -1,16 +1,15 @@
 
-import {Router} from "express";
-import authRoutes from "./authRoutes";
-import adminRoutes from "./adminRoutes";
-import clientRoutes from "./clientRoutes";
-import nutritionistRoutes from "./nutritionistRoutes";
+const express = require('express');
+const router = express.Router();
+const authRoutes = require("./authRoutes");
+const adminRoutes = require("./adminRoutes")
+const clientRoutes = require("./clientRoutes");
+const nutritionistRoutes = require("./nutritionistRoutes");
 
-
-var router = Router();
 
 router.use("/auth", authRoutes);
 router.use("/admin", adminRoutes);
 router.use("/client", clientRoutes);
 router.use("/nutritionist", nutritionistRoutes)
 
-export default router;
+module.exports = router;

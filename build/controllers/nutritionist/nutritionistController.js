@@ -1,10 +1,12 @@
-import Nutritionist from "../../models/User";
-import Client from "../../models/User";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Nutritionist = require("../../models/User");
+const Client = require("../../models/User");
 /**
  * GET /api/nutritionist/profile
  * Returns the profile of the logged-in nutritionist
  */
-export const getNutritionistProfile = async (req, res) => {
+const getNutritionistProfile = async (req, res) => {
     try {
         const userId = req.user._id; // user is attached by `protect` middleware
         const nutritionist = await Nutritionist.findById(userId).select("-password -tokenHash");
@@ -25,7 +27,7 @@ export const getNutritionistProfile = async (req, res) => {
  * GET /api/nutritionist/clients
  * Returns all clients assigned to the logged-in nutritionist
  */
-export const getClients = async (req, res) => {
+const getClients = async (req, res) => {
     try {
         const nutritionistId = req.user._id;
         // Example: assuming Client model has a field `nutritionist: ObjectId`
@@ -36,4 +38,8 @@ export const getClients = async (req, res) => {
         console.error("Error fetching clients:", error);
         res.status(500).json({ message: "Server error" });
     }
+};
+module.exports = {
+    getNutritionistProfile,
+    getClients
 };

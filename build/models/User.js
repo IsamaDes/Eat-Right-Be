@@ -1,4 +1,7 @@
-import mongoose from "mongoose";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoosePkg = require("mongoose");
+const mongoose = mongoosePkg;
 const userSchema = new mongoose.Schema({
     name: { type: String, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -10,4 +13,4 @@ const userSchema = new mongoose.Schema({
     tokenHash: { type: String, default: null },
     tokenExpiry: { type: Date, default: null },
 }, { timestamps: true });
-export default mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);
