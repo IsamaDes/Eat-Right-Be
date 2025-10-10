@@ -3,6 +3,7 @@ const router = express.Router();
 
 const registerController = require("../controllers/registerController");
 const loginController = require("../controllers/loginController");
+const refreshTokenController = require("../controllers/refreshTokenController");
 
 /**
  * @swagger
@@ -78,6 +79,9 @@ router.post("/register", registerController);
  *         description: Invalid credentials
  */
 router.post("/login", loginController);
+
+
+router.post("/refresh-token", refreshTokenController);
 
 module.exports = router;
 
