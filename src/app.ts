@@ -9,10 +9,8 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 /** @type {import('cors').CorsOptions} */
 
 const allowedOrigins = [
-  "http://localhost:5173",      
-  "http://localhost:3000",       
-  "https://eat-right-fe.vercel.app", 
-  "https://eat-right-be.onrender.com", 
+  "http://localhost:5173",             
+  "https://eat-right-fe.vercel.app",  
 ];
 
 const corsOptions = {
