@@ -1,6 +1,5 @@
-
 require("dotenv").config();
-const app = require("./app")
+const app = require("./app");
 const connectDB = require("./config/db");
 
 const PORT = process.env.PORT || 5000;
@@ -14,7 +13,7 @@ const startServer = async () => {
       console.log(`Server running on port ${PORT}`);
     });
 
-    const shutdown = (signal: string) => {
+    const shutdown = (signal) => {
       console.log(`${signal} received, shutting down gracefully`);
       server.close(() => {
         console.log("Process terminated");
@@ -25,7 +24,7 @@ const startServer = async () => {
     process.on("SIGTERM", () => shutdown("SIGTERM"));
     process.on("SIGINT", () => shutdown("SIGINT"));
 
-    server.on("error", (err: any) => {
+    server.on("error", (err) => {
       console.error("Server error:", err);
     });
   } catch (error) {

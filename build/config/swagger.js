@@ -14,6 +14,10 @@ const options = {
                 url: "http://localhost:5000",
                 description: "Local dev server",
             },
+            {
+                url: "https://eat-right-be.onrender.com", // Deployed backend
+                description: "Production server",
+            },
         ],
         components: {
             securitySchemes: {
@@ -26,7 +30,14 @@ const options = {
         },
         security: [{ bearerAuth: [] }],
     },
-    apis: ["./src/routes/*.ts", "./src/controllers/*.ts"],
+    apis: [
+        "./src/routes/*.ts",
+        "./src/controllers/*.ts",
+        "./build/routes/*.js",
+        "./build/controllers/*.js",
+        "./dist/routes/*.js",
+        "./dist/controllers/*.js",
+    ],
 };
 const swaggerDefinition = swaggerJSDoc(options);
 module.exports = swaggerDefinition;
