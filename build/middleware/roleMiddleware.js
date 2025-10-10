@@ -1,4 +1,6 @@
-export const authorizeRoles = (...allowedRoles) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
         if (!allowedRoles.includes(req.user.role)) {
             return res.status(403).json({ message: "Access denied" });
@@ -6,3 +8,4 @@ export const authorizeRoles = (...allowedRoles) => {
         next();
     };
 };
+module.exports = authorizeRoles;

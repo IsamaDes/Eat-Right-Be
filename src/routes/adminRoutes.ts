@@ -1,9 +1,13 @@
-import {Router} from "express";
-import { protect } from "../middleware/authMiddleware";
-import { authorizeRoles } from "../middleware/roleMiddleware";
-import { getAdminDashboard } from "../controllers/admin/adminController";
+import type { Request, Response, NextFunction } from "express";
 
-const router =  Router();
+
+const express = require("express");
+const router = express.Router();
+
+const { protect } = require("../middleware/authMiddleware");
+const  authorizeRoles  = require("../middleware/roleMiddleware");
+const getAdminDashboard  = require("../controllers/admin/adminController");
+
 
 // Only admins can access dashboard
 router.get(
@@ -14,8 +18,8 @@ router.get(
 );
 
 // Example: general admin route that any logged-in user can see (rare for admin)
-router.get("/profile", protect, (req, res) => {
+router.get("/profile", protect, (req: Request, res: Response) => {
   res.json({ message: "This is the admin profile page", user: req.user });
 });
 
-export default router;
+module.exports = router;

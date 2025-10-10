@@ -1,4 +1,4 @@
-import swaggerJSDoc from "swagger-jsdoc";
+const swaggerJSDoc = require("swagger-jsdoc");
 
 const options = {
   definition: {
@@ -28,6 +28,5 @@ const options = {
   apis: ["./src/routes/*.ts", "./src/controllers/*.ts"],
 };
 
-const swaggerSpec = swaggerJSDoc(options);
-
-export default swaggerSpec;
+const swaggerDefinition = swaggerJSDoc(options);
+module.exports = swaggerDefinition;

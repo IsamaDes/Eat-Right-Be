@@ -1,10 +1,6 @@
-
-
-
-
-import { Request, Response } from "express";
-import Nutritionist from "../../models/User"; 
-import Client from "../../models/User";
+import type { Request, Response } from "express";
+const Nutritionist = require("../../models/User"); 
+const Client = require("../../models/User");
 
 // Extend Request type to include user injected by `protect`
 interface AuthenticatedRequest extends Request {
@@ -15,7 +11,7 @@ interface AuthenticatedRequest extends Request {
  * GET /api/nutritionist/profile
  * Returns the profile of the logged-in nutritionist
  */
-export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {
+const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user._id; // user is attached by `protect` middleware
 
@@ -41,7 +37,7 @@ export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Res
  * GET /api/nutritionist/clients
  * Returns all clients assigned to the logged-in nutritionist
  */
-export const getClients = async (req: AuthenticatedRequest, res: Response) => {
+const getClients = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const nutritionistId = req.user._id;
 
@@ -57,3 +53,8 @@ export const getClients = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+
+module.exports = {
+  getNutritionistProfile,
+  getClients
+}

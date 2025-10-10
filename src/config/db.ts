@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoosePkg = require("mongoose"); 
+const mongoose = mongoosePkg;
 
 const connectDB = async () => {
   try {
@@ -16,4 +17,4 @@ const connectDB = async () => {
   }
 };
 
-export default connectDB;
+module.exports = connectDB; 

@@ -1,4 +1,7 @@
-import mongoose from "mongoose";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoosePkg = require("mongoose");
+const mongoose = mongoosePkg;
 const connectDB = async () => {
     try {
         const mongoUri = process.env.MONGO_URI;
@@ -13,4 +16,4 @@ const connectDB = async () => {
         process.exit(1);
     }
 };
-export default connectDB;
+module.exports = connectDB;

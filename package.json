@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "Backend server for EatRight",
-  "type": "commonjs",
   "main": "server.ts",
   "scripts": {
-  "dev": "tsx watch src/server.ts",
+  "dev": "ts-node src/server.ts",
   "build": "tsc",
   "start": "node build/server.js"
 },

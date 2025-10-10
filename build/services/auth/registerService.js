@@ -1,6 +1,8 @@
-import bcrypt from "bcryptjs";
-import User from "../../models/User";
-import generateTokenAndHash from "../../utils/tokenUtils";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const bcrypt = require("bcryptjs");
+const User = require("../../models/User");
+const generateTokenAndHash = require("../../utils/tokenUtils");
 const registerUser = async (name, email, password, role) => {
     if (!email || !password)
         throw new Error("Email and password required");
@@ -25,4 +27,4 @@ const registerUser = async (name, email, password, role) => {
         token,
     };
 };
-export default registerUser;
+module.exports = registerUser;

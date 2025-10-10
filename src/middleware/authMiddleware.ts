@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 import type { JwtPayload } from "jsonwebtoken";
-import User from "../models/User.js";
+const User = require("../models/User.js");
 
 // Extend Express Request interface to include `user`
 declare global {
@@ -62,7 +62,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
  * Middleware to protect routes.
  * Verifies JWT token and attaches user info to req.user.
  */
-export const protect = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+const protect = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   let token;
 
   // Look for "Bearer <token>" in Authorization header
@@ -89,4 +89,4 @@ export const protect = async (req: AuthenticatedRequest, res: Response, next: Ne
   }
 };
 
-export default auth;
+module.exports = {auth, protect};

@@ -1,6 +1,6 @@
 // src/controllers/auth/loginController.ts
-import { Request, Response, NextFunction } from "express";
-import loginUser from "../services/auth/loginService";
+import type { Request, Response, NextFunction } from "express";
+const loginUser = require("../services/auth/loginService");
 
 const loginController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -13,4 +13,4 @@ const loginController = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export default loginController;
+module.exports = loginController;

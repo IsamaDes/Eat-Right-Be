@@ -1,6 +1,6 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../../models/User";
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../../models/User");
 
 const loginUser = async (email: string, password: string) => {
   if (!email || !password) throw new Error("Email and password required");
@@ -21,5 +21,5 @@ const loginUser = async (email: string, password: string) => {
   };
 };
 
-export default loginUser;
+module.exports =  loginUser;
 

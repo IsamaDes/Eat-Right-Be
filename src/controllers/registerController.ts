@@ -1,6 +1,6 @@
-import express from "express";
-import registerUser from "../services/auth/registerService";
-import { Request, Response, NextFunction } from "express";
+const express = require("express");
+const registerUser = require("../services/auth/registerService");
+import type { Request, Response, NextFunction } from "express";
 
 
 const registerController = async (req: Request, res: Response, next: NextFunction) => {
@@ -17,4 +17,4 @@ const registerController = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export default registerController;
+module.exports = registerController;

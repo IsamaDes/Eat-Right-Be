@@ -1,7 +1,9 @@
-import { Router } from "express";
-import registerController from "../controllers/registerController";
-import loginController from "../controllers/loginController";
-const router = Router();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const router = express.Router();
+const registerController = require("../controllers/registerController");
+const loginController = require("../controllers/loginController");
 router.post("/register", registerController);
 router.post("/login", loginController);
-export default router;
+module.exports = router;

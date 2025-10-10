@@ -1,4 +1,7 @@
-import registerUser from "../services/auth/registerService";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const registerUser = require("../services/auth/registerService");
 const registerController = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body;
@@ -11,4 +14,4 @@ const registerController = async (req, res, next) => {
         next(err);
     }
 };
-export default registerController;
+module.exports = registerController;

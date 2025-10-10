@@ -1,8 +1,10 @@
-import { Router } from "express";
-import { protect } from "../middleware/authMiddleware";
-import { authorizeRoles } from "../middleware/roleMiddleware";
-import { getClientProfile } from "../controllers/client/clientController";
-const router = Router();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const router = express.Router();
+const { protect } = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
+const getClientProfile = require("../controllers/client/clientController");
 // Clients can access their profile
 router.get("/profile", protect, authorizeRoles("client"), getClientProfile);
-export default router;
+module.exports = router;

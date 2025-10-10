@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "../../models/User";
+const User = require("../../models/User");
 
 // Extend Request type for TypeScript
 interface AuthenticatedRequest extends Request {
@@ -10,7 +10,7 @@ interface AuthenticatedRequest extends Request {
  * GET /api/client/profile
  * Returns the logged-in client's profile
  */
-export const getClientProfile = async (req: AuthenticatedRequest, res: Response) => {
+ const getClientProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user._id;
 
@@ -31,3 +31,5 @@ export const getClientProfile = async (req: AuthenticatedRequest, res: Response)
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+module.exports = getClientProfile;

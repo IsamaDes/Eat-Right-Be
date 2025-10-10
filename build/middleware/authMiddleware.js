@@ -1,5 +1,7 @@
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const jwt = require("jsonwebtoken");
+const User = require("../models/User.js");
 const auth = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
@@ -36,7 +38,7 @@ const auth = async (req, res, next) => {
  * Middleware to protect routes.
  * Verifies JWT token and attaches user info to req.user.
  */
-export const protect = async (req, res, next) => {
+const protect = async (req, res, next) => {
     let token;
     // Look for "Bearer <token>" in Authorization header
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
@@ -60,4 +62,4 @@ export const protect = async (req, res, next) => {
         return res.status(401).json({ message: "No token provided" });
     }
 };
-export default auth;
+module.exports = { auth, protect };

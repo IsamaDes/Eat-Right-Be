@@ -1,4 +1,7 @@
-import mongoose from "mongoose";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoosePkg = require("mongoose");
+const mongoose = mongoosePkg;
 const availableMealSchema = new mongoose.Schema({
     chef_name: { type: String },
     meal_name: { type: String, required: true },
@@ -9,4 +12,4 @@ const availableMealSchema = new mongoose.Schema({
         fat: Number,
     },
 }, { timestamps: true });
-export default mongoose.model("AvailableMeal", availableMealSchema);
+module.exports = mongoose.model("AvailableMeal", availableMealSchema);
