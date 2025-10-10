@@ -9,9 +9,8 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 app.use(cors({
   origin: [
-    "https://todo-frontend-rosy-five.vercel.app",
+    "https://eat-right-fe.vercel.app",
     "http://localhost:5173",
-    "http://localhost:5000",
   ],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
