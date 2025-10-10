@@ -4,6 +4,7 @@ import loginUser from "../services/auth/loginService";
 
 const loginController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+   
     const { email, password } = req.body;
     const response = await loginUser(email, password);
     res.status(200).json(response);

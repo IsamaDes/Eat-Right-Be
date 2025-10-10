@@ -16,9 +16,8 @@ const loginUser = async (email: string, password: string) => {
   });
 
   return {
-    message: "Login successful",
-    token,
-    user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    success: "Login successful",
+    data: { id: user._id, name: user.name, email: user.email, role: user.role,  token },
   };
 };
 

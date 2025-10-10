@@ -34,6 +34,7 @@ import { Request, Response, NextFunction } from "express";
  */
 const registerController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    
     const { name, email, password, role } = req.body;
     if(!name || !email || !password || !role)       
      return res.status(400).json({ message: "All fields are required" });
