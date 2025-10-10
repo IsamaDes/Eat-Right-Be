@@ -29,7 +29,14 @@ const options = {
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: ["./src/routes/*.ts", "./src/controllers/*.ts"],
+  apis: [
+     "./src/routes/*.ts",
+    "./src/controllers/*.ts",
+    "./build/routes/*.js",
+    "./build/controllers/*.js",
+    "./dist/routes/*.js",
+    "./dist/controllers/*.js",
+  ],
 };
 
 const swaggerDefinition = swaggerJSDoc(options);
