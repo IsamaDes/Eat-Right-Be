@@ -7,11 +7,26 @@ const apiRoutes = require("./routes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 /** @type {import('cors').CorsOptions} */
+
+const allowedOrigins = [
+  "http://localhost:5173",      
+  "http://localhost:3000",       
+  "https://eat-right.vercel.app", 
+  "https://eat-right-be.onrender.com", 
+];
+
 const corsOptions = {
-  origin: true,
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.error(`❌ CORS blocked request from origin: ${origin}`);
+      callback(new Error("CORS not allowed for this origin"));
+    }
+  },
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 };
 
 app.use(cors(corsOptions));
