@@ -11,7 +11,7 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const allowedOrigins = [
   "http://localhost:5173",      
   "http://localhost:3000",       
-  "https://eat-right.vercel.app", 
+  "https://eat-right-fe.vercel.app", 
   "https://eat-right-be.onrender.com", 
 ];
 
