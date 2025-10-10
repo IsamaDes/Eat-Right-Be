@@ -14,10 +14,15 @@ const loginUser = async (email: string, password: string) => {
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET!, {
     expiresIn: "1d",
   });
+  const refreshToken = jwt.sign(
+    { userId: user._id },
+    process.env.JWT_REFRESH_SECRET!,
+    { expiresIn: "5d" } 
+  );
 
   return {
     success: "Login successful",
-    data: { id: user._id, name: user.name, email: user.email, role: user.role,  token },
+    data: { id: user._id, name: user.name, email: user.email, role: user.role,  token, refreshToken },
   };
 };
 
