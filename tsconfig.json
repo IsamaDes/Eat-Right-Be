@@ -1,26 +1,13 @@
 {
-  "include": [
-    "src/**/*",
-], 
-"exclude": ["node_modules", "build"],
   "compilerOptions": {
-    "jsx": "react",                                
-    "module": "commonjs",                               
+    "target": "ES2020",
+    "module": "ESNext",           // <-- use ESNext or ES2020
     "moduleResolution": "node",
-    "target": "ES2020",                         /* Specify how TypeScript looks up a file from a given module specifier. */
-    "resolveJsonModule": true,                           /* Enable importing .json files. */
+    "outDir": "build",
+    "rootDir": "src",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-
-    /* JavaScript Support */
-    "allowJs": true, 
-    "rootDir": "src",                                   /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
-    "outDir": "build",                                   /* Specify an output folder for all emitted files. */
-    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing 
-    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
-
-    /* Type Checking */
-    "strict": true,                                      /* Enable all strict type-checking options. */
-    "noImplicitAny": true,                               /* Enable error reporting for expressions and declarations with 
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+    "strict": true,
+    "skipLibCheck": true
   }
 }

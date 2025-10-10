@@ -3,35 +3,6 @@ import registerUser from "../services/auth/registerService";
 import { Request, Response, NextFunction } from "express";
 
 
-
-/**
- * @swagger
- * /api/auth/register:
- *   post:
- *     summary: Register a new user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [email, password]
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       201:
- *         description: User created
- *       400:
- *         description: Missing fields
- *       409:
- *         description: User already exists
- */
 const registerController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     

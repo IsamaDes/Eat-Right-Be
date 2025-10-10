@@ -1,14 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const User_1 = __importDefault(require("./User"));
-const foodMenuSchema = new mongoose_1.default.Schema({
+import mongoose from "mongoose";
+import Nutritionist from "./User";
+const foodMenuSchema = new mongoose.Schema({
     date_created: { type: Date, default: Date.now },
     date_range: { type: String },
-    Nutritionist: { type: mongoose_1.default.Schema.Types.ObjectId, ref: User_1.default },
+    Nutritionist: { type: mongoose.Schema.Types.ObjectId, ref: Nutritionist },
     weeks: { types: Number },
     meal_plan: [
         {
@@ -26,4 +21,4 @@ const foodMenuSchema = new mongoose_1.default.Schema({
         },
     ],
 });
-exports.default = mongoose_1.default.model("FoodMenu", foodMenuSchema);
+export default mongoose.model("FoodMenu", foodMenuSchema);
