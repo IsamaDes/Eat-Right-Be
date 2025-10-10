@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-import connectDB from "./config/db";
+// import connectDB from "./config/db";
+const connectDB = require("./config/db");
 import app from "./app";
 
 dotenv.config();
