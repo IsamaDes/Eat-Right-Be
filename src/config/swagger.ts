@@ -13,6 +13,10 @@ const options = {
         url: "http://localhost:5000",
         description: "Local dev server",
       },
+      {
+        url: "https://eat-right-be.onrender.com", // Deployed backend
+        description: "Production server",
+      },
     ],
     components: {
       securitySchemes: {
