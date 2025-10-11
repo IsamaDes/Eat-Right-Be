@@ -10,12 +10,12 @@ const getAdminDashboard  = require("../controllers/admin/adminController");
 
 
 // Only admins can access dashboard
-router.get(
-  "/dashboard",
-  protect,                  // User must be logged in
-  authorizeRoles("admin"),  // User must be admin
-  getAdminDashboard
-);
+// router.get(
+//   "/dashboard",
+//   protect,                  // User must be logged in
+//   authorizeRoles("admin"),  // User must be admin
+//   getAdminDashboard
+// );
 
 // Example: general admin route that any logged-in user can see (rare for admin)
 router.get("/profile", protect, (req: Request, res: Response) => {

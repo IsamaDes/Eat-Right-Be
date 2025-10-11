@@ -6,6 +6,7 @@ const LOCK_TIME = 30 * 60 * 1000; // 30 minutes in ms
 const MAX_ATTEMPTS = 3;
 
 const loginUser = async (email: string, password: string) => {
+  
   if (!email || !password) throw new Error("Email and password required");
 
   const user = await User.findOne({ email: email.toLowerCase() });
@@ -45,6 +46,8 @@ const loginUser = async (email: string, password: string) => {
     success: "Login successful",
     data: { id: user._id, name: user.name, email: user.email, role: user.role,  token, refreshToken },
   };
+
+  
 };
 
 module.exports =  loginUser;
