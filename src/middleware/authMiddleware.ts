@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 const jwt = require("jsonwebtoken");
 import type { JwtPayload } from "jsonwebtoken";
-const User = require("../models/User.js");
+const User = require("../models/User");
 
 // Extend Express Request interface to include `user`
 declare global {

@@ -1,8 +1,8 @@
 // src/controllers/authController.ts
 import { Request, Response } from "express";
-const { refreshAccessToken } = require("../services/authService");
+const { refreshAccessToken } = require("../services/auth/refreshTokenService");
 
-export const refreshTokenController = async (req: Request, res: Response) => {
+ const refreshTokenController = async (req: Request, res: Response) => {
   try {
     const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
     const newAccessToken = await refreshAccessToken(refreshToken);
@@ -13,3 +13,5 @@ export const refreshTokenController = async (req: Request, res: Response) => {
     res.status(403).json({ message: err.message || "Invalid or expired refresh token" });
   }
 };
+
+module.exports = refreshTokenController;
