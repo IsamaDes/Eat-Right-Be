@@ -6,7 +6,14 @@ const swaggerSpec = require("./config/swagger");
 const apiRoutes = require("./routes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: ["https://eatright-theta.vercel.app", "http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
