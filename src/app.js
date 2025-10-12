@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const helmet = require("helmet");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
@@ -15,6 +16,25 @@ app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin);
   next();
 });
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "default-src": ["'self'"],
+        "img-src": ["'self'", "data:", "https:"],
+        "script-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+        "style-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com",
+        ],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 app.use(
   cors({
