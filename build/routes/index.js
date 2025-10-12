@@ -6,6 +6,17 @@ const authRoutes = require("./authRoutes");
 const adminRoutes = require("./adminRoutes");
 const clientRoutes = require("./clientRoutes");
 const nutritionistRoutes = require("./nutritionistRoutes");
+router.get("/", (req, res) => {
+    res.json({
+        message: "API is working",
+        endpoints: {
+            auth: "/api/auth",
+            admin: "/api/admin",
+            client: "/api/client",
+            nutritionist: "/api/nutritionist"
+        }
+    });
+});
 router.use("/auth", authRoutes);
 router.use("/admin", adminRoutes);
 router.use("/client", clientRoutes);

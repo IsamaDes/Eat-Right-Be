@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = require("jsonwebtoken");
-const User = require("../models/User.js");
+const User = require("../models/User");
 const auth = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;

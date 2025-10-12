@@ -4,6 +4,7 @@ const router = express.Router();
 const registerController = require("../controllers/registerController");
 const loginController = require("../controllers/loginController");
 const refreshTokenController = require("../controllers/refreshTokenController");
+const logOutController = require("../controllers/logOutController");
 
 /**
  * @swagger
@@ -82,6 +83,8 @@ router.post("/login", loginController);
 
 
 router.post("/refresh-token", refreshTokenController);
+
+router.post("/logout", logOutController);
 
 module.exports = router;
 

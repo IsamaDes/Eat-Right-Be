@@ -4,7 +4,17 @@ const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
 const apiRoutes = require("./routes");
-const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+const {
+  notFound,
+  errorHandler,
+  badRequest,
+  invalidCredentials,
+} = require("./middleware/errorMiddleware");
+
+app.use((req, res, next) => {
+  console.log("Origin:", req.headers.origin);
+  next();
+});
 
 app.use(
   cors({
@@ -19,9 +29,14 @@ app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req, res) => res.send("API is running"));
-app.use("/api", apiRoutes);
+app.use("/auth", authRoutes);
+app.use("/admin", adminRoutes);
+app.use("/client", clientRoutes);
+app.use("/nutritionist", nutritionistRoutes);
 
 app.use(errorHandler);
+app.use(badRequest);
+app.use(invalidCredentials);
 app.use(notFound);
 
 module.exports = app;
