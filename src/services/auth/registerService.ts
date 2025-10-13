@@ -1,10 +1,16 @@
-const bcrypt = require("bcryptjs");
-const User = require("../../models/User");
-const generateTokenAndHash = require("../../utils/tokenUtils");
-const { validateRegistrationInput } = require("../../utils/validationUtils");
+import bcrypt from "bcryptjs";
+import User from "../../models/User.js";
+import generateTokenAndHash from "../../utils/tokenUtils.js";
+import {validateRegistrationInput,  sanitizeInput, isValidEmail, isStrongPassword,} from "../../utils/validation.js";
 
+interface RegisteredUserResponse {
+  id: string;
+  email: string;
+  role: string;
+  token: string;
+}
 
-const registerUser = async (name: string, email: string, password: string, role: string) => {
+const registerUser = async (name: string, email: string, password: string, role: string): Promise<RegisteredUserResponse> =>{
 
   const { valid, errors, sanitized } = validateRegistrationInput({
     name,
@@ -38,7 +44,7 @@ const registerUser = async (name: string, email: string, password: string, role:
 
   return {
   
-  id: user._id,
+  id: user._id.toString(),
   email: user.email,
   role: user.role,
   token,
@@ -47,4 +53,4 @@ const registerUser = async (name: string, email: string, password: string, role:
   
 };
 
-module.exports = registerUser;
+export default registerUser;

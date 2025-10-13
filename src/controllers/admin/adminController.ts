@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-const User = require("../../models/User");
+import User from "../../models/User";
 
 // Extend Request type for TypeScript
 interface AuthenticatedRequest extends Request {
@@ -36,4 +36,4 @@ interface AuthenticatedRequest extends Request {
   }
 };
 
-module.exports = getAdminDashboard;
+export default getAdminDashboard;

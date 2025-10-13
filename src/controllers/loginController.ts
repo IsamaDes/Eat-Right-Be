@@ -89,7 +89,7 @@
 
 import type { Request, Response, NextFunction } from "express";
 
-const loginUser = require("../services/auth/loginService");
+import loginUser from "../services/auth/loginService.js";
 
 const loginController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -102,4 +102,4 @@ const loginController = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-module.exports = loginController;
+export default loginController;

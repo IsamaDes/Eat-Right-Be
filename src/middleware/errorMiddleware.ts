@@ -43,7 +43,7 @@ const errorHandler = (
   });
 };
 
-module.exports = {
+export {
   notFound,
   invalidCredentials,
   badRequest,

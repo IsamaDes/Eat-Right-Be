@@ -1,11 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require("express");
-const router = express.Router();
-const registerController = require("../controllers/registerController");
-const loginController = require("../controllers/loginController");
-const refreshTokenController = require("../controllers/refreshTokenController");
-const logOutController = require("../controllers/logOutController");
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const refreshTokenController_js_1 = __importDefault(require("../controllers/refreshTokenController.js"));
+const loginController_js_1 = __importDefault(require("../controllers/loginController.js"));
+const refreshTokenController_js_2 = __importDefault(require("../controllers/refreshTokenController.js"));
+const logOutController_js_1 = __importDefault(require("../controllers/logOutController.js"));
 /**
  * @swagger
  * tags:
@@ -48,7 +51,7 @@ const logOutController = require("../controllers/logOutController");
  *       400:
  *         description: Invalid request
  */
-router.post("/register", registerController);
+router.post("/register", refreshTokenController_js_1.default);
 /**
  * @swagger
  * /api/auth/login:
@@ -77,7 +80,7 @@ router.post("/register", registerController);
  *       401:
  *         description: Invalid credentials
  */
-router.post("/login", loginController);
-router.post("/refresh-token", refreshTokenController);
-router.post("/logout", logOutController);
-module.exports = router;
+router.post("/login", loginController_js_1.default);
+router.post("/refresh-token", refreshTokenController_js_2.default);
+router.post("/logout", logOutController_js_1.default);
+exports.default = router;

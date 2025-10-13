@@ -1,5 +1,5 @@
-const FoodMenu = require("../models/FoodMenu");
-const User = require("../models/User");
+import FoodMenu from "../models/FoodMenu.js";
+import User from "../models/User.js";
 
 /**
  * Basic sanitization — prevents simple injection patterns
@@ -81,4 +81,4 @@ const createMealPlan = async (userId: any, mealData: any) => {
   return newMealPlan;
 };
 
-module.exports = { createMealPlan };
+export default { createMealPlan };

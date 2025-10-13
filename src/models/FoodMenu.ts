@@ -1,5 +1,4 @@
-import mongoosePkg = require("mongoose"); 
-const mongoose = mongoosePkg;
+import mongoose from "mongoose"
 
 const Nutritionist = require("./User");
 
@@ -25,4 +24,4 @@ const foodMenuSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = mongoose.model("FoodMenu", foodMenuSchema);
+export default mongoose.model("FoodMenu", foodMenuSchema);

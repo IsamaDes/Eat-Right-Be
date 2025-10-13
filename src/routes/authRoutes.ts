@@ -1,10 +1,10 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const registerController = require("../controllers/registerController");
-const loginController = require("../controllers/loginController");
-const refreshTokenController = require("../controllers/refreshTokenController");
-const logOutController = require("../controllers/logOutController");
+import registerController from "../controllers/refreshTokenController.js";
+import loginController from "../controllers/loginController.js";
+import refreshTokenController from "../controllers/refreshTokenController.js";
+import logOutController  from "../controllers/logOutController.js";
 
 /**
  * @swagger
@@ -86,7 +86,7 @@ router.post("/refresh-token", refreshTokenController);
 
 router.post("/logout", logOutController);
 
-module.exports = router;
+export default router;
 
 
 

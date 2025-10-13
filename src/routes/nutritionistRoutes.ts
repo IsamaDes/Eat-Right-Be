@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {protect} = require("../middleware/authMiddleware");
-const authorizeRoles = require("../middleware/roleMiddleware");
-const { getNutritionistProfile, getClients } = require("../controllers/nutritionist/nutritionistController");
+import protect from "../middleware/authMiddleware.js";
+import authorizeRoles from "../middleware/roleMiddleware.js";
+import {getNutritionistProfile, getClients} from "../controllers/nutritionist/nutritionistController.js";
 
 // Nutritionist-only routes
 router.get(
@@ -20,4 +20,4 @@ router.get(
   getClients
 );
 
-module.exports = router;
+export default router;

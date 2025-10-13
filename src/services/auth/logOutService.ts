@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
-const User = require("../../models/User");
-const BlacklistedToken = require("../../models/BlackListedToken")
+import jwt from "jsonwebtoken";
+import User from "../../models/User.js";
+import BlacklistedToken from "../../models/BlackListedToken.js";
 
 interface DecodedToken {
   exp: number;
@@ -29,4 +29,4 @@ const logoutUser = async (refreshToken: string): Promise<void> => {
   }
 };
 
-module.exports = logoutUser;
+export default logoutUser;

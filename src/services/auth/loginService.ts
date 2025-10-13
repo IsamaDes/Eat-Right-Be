@@ -1,6 +1,6 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../../models/User");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../../models/User.js";
 
 const LOCK_TIME = 30 * 60 * 1000; // 30 minutes in ms
 const MAX_ATTEMPTS = 3;
@@ -13,8 +13,8 @@ const loginUser = async (email: string, password: string) => {
   if (!user) throw new Error("User not found");
 
   //Check if account is locked
-    if (user.lockUntil && user.lockUntil > Date.now()) {
-    const minutesLeft = Math.ceil((user.lockUntil - Date.now()) / 60000);
+    if (user.lockUntil && user.lockUntil.getTime() > Date.now()) {
+    const minutesLeft = Math.ceil((user.lockUntil.getTime() - Date.now()) / 60000);
     throw new Error(`Account locked. Try again in ${minutesLeft} minutes`);
   }
 
@@ -25,7 +25,7 @@ const loginUser = async (email: string, password: string) => {
 
     // Lock if attempts exceed max
     if (user.loginAttempts >= MAX_ATTEMPTS) {
-      user.lockUntil = Date.now() + LOCK_TIME;
+      user.lockUntil = new Date(Date.now() + LOCK_TIME);
       user.loginAttempts = 0; // reset count after locking
     }
 
@@ -50,5 +50,5 @@ const loginUser = async (email: string, password: string) => {
   
 };
 
-module.exports =  loginUser;
+export default loginUser;
 

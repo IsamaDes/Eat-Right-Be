@@ -1,6 +1,6 @@
 // src/controllers/authController.ts
 import { Request, Response } from "express";
-const { refreshAccessToken } = require("../services/auth/refreshTokenService");
+import { refreshAccessToken }from "../services/auth/refreshTokenService.js";
 
  const refreshTokenController = async (req: Request, res: Response) => {
   try {
@@ -14,4 +14,4 @@ const { refreshAccessToken } = require("../services/auth/refreshTokenService");
   }
 };
 
-module.exports = refreshTokenController;
+export default refreshTokenController;

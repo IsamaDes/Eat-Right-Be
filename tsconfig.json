@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "typeRoots": ["./src/types", "./node_modules/@types"],
     "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "typeRoots": ["./src/types", "./node_modules/@types"],
     "rootDir": "src",
     "outDir": "build",
     "esModuleInterop": true,

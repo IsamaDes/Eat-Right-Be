@@ -1,16 +1,21 @@
-const express = require("express");
-const app = express();
-const helmet = require("helmet");
-const cors = require("cors");
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./config/swagger");
-const apiRoutes = require("./routes");
-const {
+import express from "express";
+import type { Request, Response } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
+import authRoutes from "./routes/authRoutes.js";
+import clientRoutes from "./routes/clientRoutes.js";
+import nutritionistRoutes from "./routes/nutritionistRoutes.js"
+import adminRoutes from "./routes/adminRoutes.js";
+import {
   notFound,
   errorHandler,
   badRequest,
   invalidCredentials,
-} = require("./middleware/errorMiddleware");
+} from "./middleware/errorMiddleware.js";
+
+const app = express();
 
 app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin);
@@ -59,4 +64,4 @@ app.use(badRequest);
 app.use(invalidCredentials);
 app.use(notFound);
 
-module.exports = app;
+export default app;

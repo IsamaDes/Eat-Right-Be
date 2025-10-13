@@ -1,5 +1,5 @@
-const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
 /**
  * Generates a random token and returns both the plain token (for sending to the user)
@@ -17,4 +17,4 @@ const bcrypt = require("bcryptjs");
   return { token, tokenHash };
 }
 
-module.exports = generateTokenAndHash;
+export default generateTokenAndHash;

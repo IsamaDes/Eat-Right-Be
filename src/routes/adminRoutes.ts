@@ -1,12 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 
 
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const { protect } = require("../middleware/authMiddleware");
-const  authorizeRoles  = require("../middleware/roleMiddleware");
-const getAdminDashboard  = require("../controllers/admin/adminController");
+import protect from "../middleware/authMiddleware.js";
+// const  authorizeRoles  = require("../middleware/roleMiddleware");
+// const getAdminDashboard  = require("../controllers/admin/adminController");
 
 
 // Only admins can access dashboard
@@ -22,4 +22,4 @@ router.get("/profile", protect, (req: Request, res: Response) => {
   res.json({ message: "This is the admin profile page", user: req.user });
 });
 
-module.exports = router;
+export default router;

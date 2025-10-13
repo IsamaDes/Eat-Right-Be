@@ -86,8 +86,8 @@
 
 
 
-const express = require("express");
-const registerUser = require("../services/auth/registerService");
+import express from "express";
+import registerUser from "../services/auth/registerService.js";
 import type { Request, Response, NextFunction } from "express";
 
 
@@ -105,4 +105,4 @@ const registerController = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-module.exports = registerController;
+export default registerController;

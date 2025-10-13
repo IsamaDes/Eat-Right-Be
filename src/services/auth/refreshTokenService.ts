@@ -1,13 +1,13 @@
 
-const jwt = require("jsonwebtoken");
-const User = require("../../models/User");
+import jwt, { JwtPayload } from "jsonwebtoken";
+import User from "../../models/User.js";
 
 export const refreshAccessToken = async (refreshToken: string) => {
   if (!refreshToken) throw new Error("No token provided");
 
 
   const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!);
-  const user = await User.findById(decoded.userId);
+  const user = await User.findById((decoded as JwtPayload).userId);
 
   if (!user) throw new Error("Invalid token");
 

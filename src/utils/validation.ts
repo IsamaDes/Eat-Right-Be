@@ -1,27 +1,33 @@
 //Input validation → check if the data has the right format/type.
 //clean/escape dangerous input to prevent injection attacks (like MongoDB operator injection or script injection).
 
-function sanitizeInput(value) {
+export function sanitizeInput(value: string): string {
   if (typeof value !== "string") return value;
   return value.replace(/[<>{}$;]/g, "").trim();
 }
 
 //check for valid email
-function isValidEmail(email) {
+export function isValidEmail(email: string) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
 //check password strength
-function isStrongPassword(password) {
+export function isStrongPassword(password: string): boolean {
   const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
   return passRegex.test(password);
 }
 
+export interface RegistrationInput {
+  name: string;
+  email: string;
+  password: string;
+}
+
 //General validation Wrapper
-function validRegistrationInput({ name, email, password }) {
+export function validateRegistrationInput({ name, email, password }: RegistrationInput) {
   const errors = [];
-  if (!name || name.trim() < 2) {
+  if (!name || name.trim().length < 2) {
     errors.push("Name must be atleast two characters long");
   }
   if (!email || !isValidEmail(email)) {
@@ -44,6 +50,9 @@ function validRegistrationInput({ name, email, password }) {
   };
 }
 
-module.exports = {
+export default {
+  sanitizeInput,
+  isValidEmail,
+  isStrongPassword,
   validateRegistrationInput,
 };

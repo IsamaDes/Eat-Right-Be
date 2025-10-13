@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 // Extend Express Request interface to include `user`
 declare global {
@@ -46,4 +46,4 @@ const protect = async (req: AuthenticatedRequest, res: Response, next: NextFunct
   }
 };
 
-module.exports = {protect};
+export default protect;
