@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import Nutritionist from  "../../models/User.js"; 
 import Client from "../../models/User.js";
-import { createMealPlanService, getMealPlansService } from "../../services/nutritionService.js";
+import { createMealPlanService,getMealPlansService, updateMealPlanService } from "../../services/nutritionService.js";
 
 // Extend Request type to include user injected by `protect`
 interface AuthenticatedRequest extends Request {
@@ -85,4 +85,13 @@ export const getMealPlans = async (req: Request, res: Response, next: NextFuncti
 };
 
 
-
+export const updateMealPlan = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?._id;
+    const { id } = req.params;
+    const updatedPlan = await updateMealPlanService(userId, id, req.body);
+    res.status(200).json({ success: true, data: updatedPlan });
+  } catch (err: any) {
+    next(err);
+  }
+};

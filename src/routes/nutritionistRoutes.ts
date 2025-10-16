@@ -3,7 +3,7 @@ const router = express.Router();
 
 import protect from "../middleware/authMiddleware.js";
 import authorizeRoles from "../middleware/roleMiddleware.js";
-import {getNutritionistProfile, getClients, createMealPlan, getMealPlans} from "../controllers/nutritionist/nutritionistController.js";
+import {getNutritionistProfile, getClients, createMealPlan, getMealPlans, updateMealPlan} from "../controllers/nutritionist/nutritionistController.js";
 
 
 // Nutritionist-only routes
@@ -30,6 +30,10 @@ router.post(
 
 router.get("/", authorizeRoles("admin", "nutritionist", "client"), getMealPlans);
 
-
+router.put(
+  "/:id",
+  authorizeRoles("admin", "nutritionist"),
+  updateMealPlan
+);
 
 export default router;

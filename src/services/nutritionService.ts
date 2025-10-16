@@ -75,3 +75,25 @@ export const getMealPlansService = async (userId: string, filters: any = {}) => 
     },
   };
 };
+
+// Update Meal Plan
+export const updateMealPlanService = async (userId: string, mealPlanId: string, updates: any) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
+  if (user.role !== "admin" && user.role !== "nutritionist") {
+    throw new Error("Access denied: only admins or nutritionists can update meal plans");
+  }
+
+  const mealPlan = await MealPlan.findById(mealPlanId);
+  if (!mealPlan) throw new Error("Meal plan not found");
+
+  // Optionally, nutritionist can only edit their own created plans
+  if (user.role === "nutritionist" && mealPlan.nutritionistName !== user.name) {
+    throw new Error("You can only update your own meal plans");
+  }
+
+  Object.assign(mealPlan, updates);
+  await mealPlan.save();
+
+  return mealPlan;
+};
