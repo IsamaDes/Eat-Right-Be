@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import Nutritionist from  "../../models/User.js"; 
 import Client from "../../models/User.js";
-import { createMealPlanService,getMealPlansService, updateMealPlanService } from "../../services/nutritionService.js";
+import { createMealPlanService,getMealPlansService, updateMealPlanService, getMealPlanByIdService } from "../../services/nutritionService.js";
 
 // Extend Request type to include user injected by `protect`
 interface AuthenticatedRequest extends Request {
@@ -55,10 +55,6 @@ export const getClients = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 
-
-
-
-
 export const createMealPlan = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?._id; // set by protect middleware (from cookie)
@@ -91,6 +87,18 @@ export const updateMealPlan = async (req: Request, res: Response, next: NextFunc
     const { id } = req.params;
     const updatedPlan = await updateMealPlanService(userId, id, req.body);
     res.status(200).json({ success: true, data: updatedPlan });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+export const getMealPlanById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?._id;
+    const { id } = req.params;
+
+    const mealPlan = await getMealPlanByIdService(userId, id);
+    res.status(200).json({ success: true, data: mealPlan });
   } catch (err: any) {
     next(err);
   }

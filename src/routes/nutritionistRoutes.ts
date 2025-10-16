@@ -3,20 +3,18 @@ const router = express.Router();
 
 import protect from "../middleware/authMiddleware.js";
 import authorizeRoles from "../middleware/roleMiddleware.js";
-import {getNutritionistProfile, getClients, createMealPlan, getMealPlans, updateMealPlan} from "../controllers/nutritionist/nutritionistController.js";
+import {getNutritionistProfile, getClients, createMealPlan, getMealPlans, updateMealPlan, getMealPlanById} from "../controllers/nutritionist/nutritionistController.js";
 
-
+router.use(protect);
 // Nutritionist-only routes
 router.get(
   "/profile",
-  protect,
   authorizeRoles("nutritionist"),
   getNutritionistProfile
 );
 
 router.get(
   "/clients",
-  protect,
   authorizeRoles("nutritionist"),
   getClients
 );
@@ -36,4 +34,12 @@ router.put(
   updateMealPlan
 );
 
+router.get(
+  "/:id",
+  authorizeRoles("admin", "nutritionist", "client"),
+  getMealPlanById
+);
+
 export default router;
+
+
