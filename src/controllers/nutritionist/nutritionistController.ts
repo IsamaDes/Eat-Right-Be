@@ -1,6 +1,7 @@
-import type { Request, Response } from "express";
-const Nutritionist = require("../../models/User"); 
-const Client = require("../../models/User");
+import type { Request, Response, NextFunction } from "express";
+import Nutritionist from  "../../models/User.js"; 
+import Client from "../../models/User.js";
+import { createMealPlanService,getMealPlansService, updateMealPlanService, getMealPlanByIdService } from "../../services/nutritionService.js";
 
 // Extend Request type to include user injected by `protect`
 interface AuthenticatedRequest extends Request {
@@ -11,7 +12,7 @@ interface AuthenticatedRequest extends Request {
  * GET /api/nutritionist/profile
  * Returns the profile of the logged-in nutritionist
  */
-const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {
+export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user._id; // user is attached by `protect` middleware
 
@@ -37,7 +38,7 @@ const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) 
  * GET /api/nutritionist/clients
  * Returns all clients assigned to the logged-in nutritionist
  */
-const getClients = async (req: AuthenticatedRequest, res: Response) => {
+export const getClients = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const nutritionistId = req.user._id;
 
@@ -54,7 +55,51 @@ const getClients = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 
-module.exports = {
-  getNutritionistProfile,
-  getClients
-}
+export const createMealPlan = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?._id; // set by protect middleware (from cookie)
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized: no valid token" });
+    }
+
+    const mealPlan = await createMealPlanService(userId, req.body);
+    res.status(201).json({ success: true, data: mealPlan });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+
+export const getMealPlans = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?._id;
+    const result = await getMealPlansService(userId, req.query);
+    res.status(200).json({ success: true, ...result });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+
+export const updateMealPlan = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?._id;
+    const { id } = req.params;
+    const updatedPlan = await updateMealPlanService(userId, id, req.body);
+    res.status(200).json({ success: true, data: updatedPlan });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+export const getMealPlanById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?._id;
+    const { id } = req.params;
+
+    const mealPlan = await getMealPlanByIdService(userId, id);
+    res.status(200).json({ success: true, data: mealPlan });
+  } catch (err: any) {
+    next(err);
+  }
+};

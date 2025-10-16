@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const User = require("../../models/User");
+const User_1 = __importDefault(require("../../models/User"));
 /**
  * GET /api/client/profile
  * Returns the logged-in client's profile
@@ -8,7 +11,7 @@ const User = require("../../models/User");
 const getClientProfile = async (req, res) => {
     try {
         const userId = req.user._id;
-        const client = await User.findById(userId).select("-password -tokenHash -tokenExpiry");
+        const client = await User_1.default.findById(userId).select("-password -tokenHash -tokenExpiry");
         if (!client) {
             return res.status(404).json({ message: "Client not found" });
         }
@@ -22,4 +25,4 @@ const getClientProfile = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-module.exports = getClientProfile;
+exports.default = getClientProfile;

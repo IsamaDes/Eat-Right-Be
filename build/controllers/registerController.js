@@ -84,19 +84,21 @@
  *                   type: string
  *                   example: Something went wrong
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require("express");
-const registerUser = require("../services/auth/registerService");
+const registerService_js_1 = __importDefault(require("../services/auth/registerService.js"));
 const registerController = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body;
         if (!name || !email || !password || !role)
             return res.status(400).json({ message: "All fields are required" });
-        const response = await registerUser(name, email, password, role);
+        const response = await (0, registerService_js_1.default)(name, email, password, role);
         res.status(201).json(response);
     }
     catch (err) {
         next(err);
     }
 };
-module.exports = registerController;
+exports.default = registerController;

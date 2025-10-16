@@ -1,25 +1,22 @@
 import type { Request, Response, NextFunction } from "express";
 
 
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const { protect } = require("../middleware/authMiddleware");
-const  authorizeRoles  = require("../middleware/roleMiddleware");
-const getAdminDashboard  = require("../controllers/admin/adminController");
+import protect from "../middleware/authMiddleware.js";
+import authorizeRoles from "../middleware/roleMiddleware.js";
+import getAdminDashboard from "../controllers/admin/adminController.js";
+
 
 
 // Only admins can access dashboard
-// router.get(
-//   "/dashboard",
-//   protect,                  // User must be logged in
-//   authorizeRoles("admin"),  // User must be admin
-//   getAdminDashboard
-// );
+router.get(
+  "/dashboard",
+  protect,                  // User must be logged in
+  authorizeRoles("admin"),  // User must be admin
+  getAdminDashboard
+);
 
-// Example: general admin route that any logged-in user can see (rare for admin)
-router.get("/profile", protect, (req: Request, res: Response) => {
-  res.json({ message: "This is the admin profile page", user: req.user });
-});
 
-module.exports = router;
+export default router;

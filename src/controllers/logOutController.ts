@@ -1,6 +1,6 @@
 
 import { Request, Response } from "express";
-const logOutUser = require("../services/auth/logOutService")
+import logOutUser from "../services/auth/logOutService.js"
 
 
 const logoutUserController = async (req: Request, res: Response) => {
@@ -25,4 +25,4 @@ console.error("Logout error:", err);
  }
 };
 
-module.exports = logoutUserController;
+export default logoutUserController;

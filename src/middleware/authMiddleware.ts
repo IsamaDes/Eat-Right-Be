@@ -1,49 +1,46 @@
 import type { Request, Response, NextFunction } from "express";
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
 
-// Extend Express Request interface to include `user`
-declare global {
-  namespace Express {
-    interface Request {
-      user?: any;
-    }
-  }
-}
+import User from "../models/User.js";
+import Jwt, { JwtPayload }  from "jsonwebtoken";
 
-interface AuthenticatedRequest extends Request {
-  user?: any;
-}
+
 
 /**
  * Middleware to protect routes.
  * Verifies JWT token and attaches user info to req.user.
  */
-const protect = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  let token;
+const protect = async (req: Request, res: Response, next: NextFunction) => {
 
-  // Look for "Bearer <token>" in Authorization header
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+  
     try {
-      token = req.headers.authorization.split(" ")[1];
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+      const token = req.cookies?.accessToken;
+
+      if (!token) {
+      console.log("❌ No access token in cookies");
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
+    console.log("✅ Token found:", token.substring(0, 20) + "...");
+      
+     const decoded = Jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+     console.log("✅ Token decoded:", decoded);
 
       // Fetch user from DB (without password)
       const user = await User.findById(decoded.id).select("-password");
 
       if (!user) {
+        console.log("❌ User not found for ID:", decoded.id);
         return res.status(401).json({ message: "User not found" });
       }
 
-      req.user = user; // Attach user to request
+      console.log("✅ User authenticated:", user.email);
+      
+      req.user = {_id: user._id.toString(), email: user.email, role: user.role}; // Attach user to request
       next();
     } catch (err) {
       console.error("JWT verification failed:", err);
       return res.status(401).json({ message: "Token invalid or expired" });
     }
-  } else {
-    return res.status(401).json({ message: "No token provided" });
-  }
+  
 };
 
-module.exports = {protect};
+export default protect;

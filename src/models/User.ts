@@ -1,5 +1,4 @@
-import mongoosePkg = require("mongoose"); 
-const mongoose = mongoosePkg;
+import mongoose from "mongoose"
 
 const userSchema = new mongoose.Schema({
   name: { type: String, trim: true },
@@ -16,4 +15,4 @@ const userSchema = new mongoose.Schema({
   tokenExpiry: { type: Date, default: null },
 }, { timestamps: true });
 
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

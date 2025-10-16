@@ -1,5 +1,5 @@
-import mongoosePkg = require("mongoose"); 
-const mongoose = mongoosePkg;
+import mongoose from "mongoose"
+
 
 export interface IBlacklistedToken extends Document {
   token: string;

@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const { protect } = require("../middleware/authMiddleware");
-const  authorizeRoles  = require("../middleware/roleMiddleware");
-const  getClientProfile  = require("../controllers/client/clientController");
+import protect from "../middleware/authMiddleware.js";
+import authorizeRoles from "../middleware/roleMiddleware.js";
+import getClientProfile from "../controllers/client/clientController.js";
 
 
 
@@ -14,4 +14,4 @@ router.get(
   getClientProfile
 );
 
-module.exports = router;
+export default router;

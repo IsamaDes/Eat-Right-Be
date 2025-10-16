@@ -84,25 +84,28 @@
  *                   example: Something went wrong
  */
 
-
-
-const express = require("express");
-const registerUser = require("../services/auth/registerService");
+import registerUser from "../services/auth/registerService.js";
 import type { Request, Response, NextFunction } from "express";
 
 
 const registerController = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    
+   try {
     const { name, email, password, role } = req.body;
-    if(!name || !email || !password || !role)       
-     return res.status(400).json({ message: "All fields are required" });
-
-    const response = await registerUser(name, email, password, role);
-    res.status(201).json(response);
-  } catch (err) {
-    next(err);
+    const result = await registerUser(name, email, password, role, res);
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: result.id,
+        name: result.name,
+        email: result.email,
+        role: result.role,
+      },
+    });
+  }catch (error: any) {
+    console.error("Registration error:", error.message);
+    res.status(400).json({ message: error.message });
+    next(error);
   }
 };
 
-module.exports = registerController;
+export default registerController;

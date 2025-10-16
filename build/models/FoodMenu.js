@@ -1,12 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoosePkg = require("mongoose");
-const mongoose = mongoosePkg;
+const mongoose_1 = __importDefault(require("mongoose"));
 const Nutritionist = require("./User");
-const foodMenuSchema = new mongoose.Schema({
+const foodMenuSchema = new mongoose_1.default.Schema({
     date_created: { type: Date, default: Date.now },
     date_range: { type: String },
-    Nutritionist: { type: mongoose.Schema.Types.ObjectId, ref: Nutritionist },
+    Nutritionist: { type: mongoose_1.default.Schema.Types.ObjectId, ref: Nutritionist },
     weeks: { types: Number },
     meal_plan: [
         {
@@ -24,4 +26,4 @@ const foodMenuSchema = new mongoose.Schema({
         },
     ],
 });
-module.exports = mongoose.model("FoodMenu", foodMenuSchema);
+exports.default = mongoose_1.default.model("FoodMenu", foodMenuSchema);

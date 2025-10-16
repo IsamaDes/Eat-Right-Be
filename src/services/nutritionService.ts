@@ -1,84 +1,121 @@
-const FoodMenu = require("../models/FoodMenu");
-const User = require("../models/User");
+import MealPlan, { IMealPlan } from "../models/MealPlan.js";
+import User from "../models/User.js";
 
-/**
- * Basic sanitization — prevents simple injection patterns
- */
-const sanitizeInput = (input: any): any => {
-  if (typeof input === "string") {
-    // Remove $ operators and dots (Mongo injection)
-    return input.replace(/\$/g, "").replace(/\./g, "");
-  }
-  if (Array.isArray(input)) return input.map(sanitizeInput);
-  if (typeof input === "object" && input !== null) {
-    const cleanObj: Record<string, any> = {};
-    for (const key in input) {
-      cleanObj[sanitizeInput(key)]  = sanitizeInput(input[key]);
-    }
-    return cleanObj;
-  }
-  return input;
-};
-
-/**
- * Simple input validation for meal plans
- */
-const validateMealPlanInput = (data: any) => {
-  const errors = [];
-
-  if (!data.date_range || typeof data.date_range !== "string") {
-    errors.push("Date range must be a valid string");
-  }
-
-  if (!Array.isArray(data.meal_plan) || data.meal_plan.length === 0) {
-    errors.push("Meal plan must include at least one week");
-  } else {
-    data.meal_plan.forEach((week: any, i: any) => {
-      if (!Array.isArray(week.meal) || week.meal.length === 0) {
-        errors.push(`Week ${i + 1} must include at least one meal`);
-      } else {
-        week.meal.forEach((m: any, j: any) => {
-          if (!m.meal_name || typeof m.meal_name !== "string")
-            errors.push(`Meal name missing in week ${i + 1}, meal ${j + 1}`);
-          if (typeof m.calories !== "number" || m.calories <= 0)
-            errors.push(`Calories must be a positive number for meal ${j + 1}`);
-        });
-      }
-    });
-  }
-
-  return errors;
-};
-
-/**
- * Creates a meal plan for a nutritionist
- */
-const createMealPlan = async (userId: any, mealData: any) => {
-  // Check user role
+export const createMealPlanService = async (userId: string, data: any): Promise<IMealPlan> => {
+  // Step 1: Verify the user exists and is an admin or nutritionist
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
-  if (user.role !== "nutritionist")
-    throw new Error("Access denied. Only nutritionists can create meal plans.");
+  if (user.role !== "admin" && user.role !== "nutritionist") {
+    throw new Error("Access denied: only admins or nutritionists can create meal plans");
+  }
 
-  // Sanitize input
-  const sanitizedData = sanitizeInput(mealData);
+  // Step 2: Extract data from frontend request
+  const {
+    clientId,
+    clientName,
+    dateRange,
+    numberOfWeeks,
+    healthGoal,
+    nutritionalRequirement,
+    weeklyMealPlans,
+  } = data;
 
-  // Validate input
-  const validationErrors = validateMealPlanInput(sanitizedData);
-  if (validationErrors.length > 0)
-    throw new Error(`Validation failed: ${validationErrors.join(", ")}`);
+  // Step 3: Validate required fields
+  if (!clientId || !weeklyMealPlans || weeklyMealPlans.length === 0) {
+    throw new Error("Missing required meal plan information");
+  }
 
-  // Create and save meal plan
-  const newMealPlan = new FoodMenu({
-    date_range: sanitizedData.date_range,
-    Nutritionist: user._id,
-    weeks: sanitizedData.meal_plan.length,
-    meal_plan: sanitizedData.meal_plan,
+  // Step 4: Save to database
+  const mealPlan = await MealPlan.create({
+    clientId,
+    clientName,
+    nutritionistName: user.name,
+    dateRange,
+    numberOfWeeks,
+    healthGoal,
+    nutritionalRequirement,
+    weeklyMealPlans,
+    createdAt: new Date(),
   });
 
-  await newMealPlan.save();
-
-  return newMealPlan;
+  return mealPlan;
 };
 
-module.exports = { createMealPlan };
+
+export const getMealPlansService = async (userId: string, filters: any = {}) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  // Admins see all; nutritionists see only their own; clients see their plans
+  const query: any = {};
+  if (user.role === "nutritionist") {
+    query.nutritionistName = user.name;
+  } else if (user.role === "client") {
+    query.clientId = user._id;
+  }
+
+  if (filters.clientName) query.clientName = { $regex: filters.clientName, $options: "i" };
+
+  const page = Number(filters.page) || 1;
+  const limit = Number(filters.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const [mealPlans, total] = await Promise.all([
+    MealPlan.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }),
+    MealPlan.countDocuments(query),
+  ]);
+
+  return {
+    data: mealPlans,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+// Update Meal Plan
+export const updateMealPlanService = async (userId: string, mealPlanId: string, updates: any) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
+  if (user.role !== "admin" && user.role !== "nutritionist") {
+    throw new Error("Access denied: only admins or nutritionists can update meal plans");
+  }
+
+  const mealPlan = await MealPlan.findById(mealPlanId);
+  if (!mealPlan) throw new Error("Meal plan not found");
+
+  // Optionally, nutritionist can only edit their own created plans
+  if (user.role === "nutritionist" && mealPlan.nutritionistName !== user.name) {
+    throw new Error("You can only update your own meal plans");
+  }
+
+  Object.assign(mealPlan, updates);
+  await mealPlan.save();
+
+  return mealPlan;
+};
+
+
+// Get Single Meal Plan by ID
+export const getMealPlanByIdService = async (userId: string, mealPlanId: string) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  const mealPlan = await MealPlan.findById(mealPlanId);
+  if (!mealPlan) throw new Error("Meal plan not found");
+
+  // Access control logic
+  if (user.role === "client" && String(mealPlan.clientId) !== String(user._id)) {
+    throw new Error("Access denied: you can only view your own meal plans");
+  }
+
+  if (user.role === "nutritionist" && mealPlan.nutritionistName !== user.name) {
+    throw new Error("Access denied: you can only view meal plans you created");
+  }
+
+  return mealPlan;
+};
+

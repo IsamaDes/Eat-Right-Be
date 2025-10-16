@@ -1,23 +1,45 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {protect} = require("../middleware/authMiddleware");
-const authorizeRoles = require("../middleware/roleMiddleware");
-const { getNutritionistProfile, getClients } = require("../controllers/nutritionist/nutritionistController");
+import protect from "../middleware/authMiddleware.js";
+import authorizeRoles from "../middleware/roleMiddleware.js";
+import {getNutritionistProfile, getClients, createMealPlan, getMealPlans, updateMealPlan, getMealPlanById} from "../controllers/nutritionist/nutritionistController.js";
 
+router.use(protect);
 // Nutritionist-only routes
 router.get(
   "/profile",
-  protect,
   authorizeRoles("nutritionist"),
   getNutritionistProfile
 );
 
 router.get(
   "/clients",
-  protect,
   authorizeRoles("nutritionist"),
   getClients
 );
 
-module.exports = router;
+
+router.post(
+  "/create",
+  authorizeRoles("admin", "nutritionist"),
+  createMealPlan
+);
+
+router.get("/", authorizeRoles("admin", "nutritionist", "client"), getMealPlans);
+
+router.put(
+  "/:id",
+  authorizeRoles("admin", "nutritionist"),
+  updateMealPlan
+);
+
+router.get(
+  "/:id",
+  authorizeRoles("admin", "nutritionist", "client"),
+  getMealPlanById
+);
+
+export default router;
+
+

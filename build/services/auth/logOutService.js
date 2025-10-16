@@ -1,17 +1,20 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const jwt = require("jsonwebtoken");
-const User = require("../../models/User");
-const BlacklistedToken = require("../../models/BlackListedToken");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const User_js_1 = __importDefault(require("../../models/User.js"));
+const BlackListedToken_js_1 = __importDefault(require("../../models/BlackListedToken.js"));
 const logoutUser = async (refreshToken) => {
     try {
-        const decoded = jwt.decode(refreshToken);
+        const decoded = jsonwebtoken_1.default.decode(refreshToken);
         if (!decoded || !decoded.exp) {
             throw new Error("Invalid token format");
         }
         const expiresAt = new Date(decoded.exp * 1000);
-        await BlacklistedToken.create({ token: refreshToken, expiresAt });
-        const user = await User.findOne({ refreshToken });
+        await BlackListedToken_js_1.default.create({ token: refreshToken, expiresAt });
+        const user = await User_js_1.default.findOne({ refreshToken });
         if (user) {
             user.refreshToken = "";
             await user.save();
@@ -22,4 +25,4 @@ const logoutUser = async (refreshToken) => {
         throw new Error(`Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 };
-module.exports = logoutUser;
+exports.default = logoutUser;

@@ -89,17 +89,17 @@
 
 import type { Request, Response, NextFunction } from "express";
 
-const loginUser = require("../services/auth/loginService");
+import loginUser from "../services/auth/loginService";
 
 const loginController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-   
     const { email, password } = req.body;
-    const response = await loginUser(email, password);
+    const response = await loginUser(email, password, res);
     res.status(200).json(response);
-  } catch (err) {
+  } catch (err: any) {
+      console.error("💥 LoginController Error:", err.message);
     next(err);
   }
 };
 
-module.exports = loginController;
+export default loginController;

@@ -1,13 +1,15 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoosePkg = require("mongoose");
-const mongoose = mongoosePkg;
-const kitchenSchema = new mongoose.Schema({
+const mongoose_1 = __importDefault(require("mongoose"));
+const kitchenSchema = new mongoose_1.default.Schema({
     location: { type: String, required: true },
     number_of_chefs: { type: Number, default: 0 },
     available_meal: [
-        { type: mongoose.Schema.Types.ObjectId, ref: "AvailableMeal" },
+        { type: mongoose_1.default.Schema.Types.ObjectId, ref: "AvailableMeal" },
     ],
     client_meal: { type: String },
 }, { timestamps: true });
-module.exports = mongoose.model("Kitchen", kitchenSchema);
+exports.default = mongoose_1.default.model("Kitchen", kitchenSchema);
