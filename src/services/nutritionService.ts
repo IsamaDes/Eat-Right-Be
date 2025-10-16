@@ -41,3 +41,37 @@ export const createMealPlanService = async (userId: string, data: any): Promise<
   return mealPlan;
 };
 
+
+export const getMealPlansService = async (userId: string, filters: any = {}) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  // Admins see all; nutritionists see only their own; clients see their plans
+  const query: any = {};
+  if (user.role === "nutritionist") {
+    query.nutritionistName = user.name;
+  } else if (user.role === "client") {
+    query.clientId = user._id;
+  }
+
+  if (filters.clientName) query.clientName = { $regex: filters.clientName, $options: "i" };
+
+  const page = Number(filters.page) || 1;
+  const limit = Number(filters.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const [mealPlans, total] = await Promise.all([
+    MealPlan.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }),
+    MealPlan.countDocuments(query),
+  ]);
+
+  return {
+    data: mealPlans,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
