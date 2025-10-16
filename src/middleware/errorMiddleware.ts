@@ -43,9 +43,5 @@ const errorHandler = (
   });
 };
 
-export {
-  notFound,
-  invalidCredentials,
-  badRequest,
-  errorHandler
-};
+
+export { notFound, invalidCredentials, badRequest, errorHandler };

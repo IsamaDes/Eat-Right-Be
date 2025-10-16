@@ -1,20 +1,19 @@
-import crypto from "crypto";
-import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 /**
- * Generates a random token and returns both the plain token (for sending to the user)
- * and its bcrypt hash (for storing securely in the database).
+ * Generate a short-lived access token (e.g. 15 minutes)
  */
- function generateTokenAndHash() {
-  // 1️⃣ Generate a secure random token
-  const token = crypto.randomBytes(32).toString("hex");
+export const generateAccessToken = (userId: string): string => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET!, {
+    expiresIn: "15m",
+  });
+};
 
-  // 2️⃣ Hash the token using bcrypt
-  const saltRounds = 10;
-  const tokenHash = bcrypt.hashSync(token, saltRounds);
-
-  // 3️⃣ Return both
-  return { token, tokenHash };
-}
-
-export default generateTokenAndHash;
+/**
+ * Generate a long-lived refresh token (e.g. 7 days)
+ */
+export const generateRefreshToken = (userId: string): string => {
+  return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET!, {
+    expiresIn: "7d",
+  });
+};

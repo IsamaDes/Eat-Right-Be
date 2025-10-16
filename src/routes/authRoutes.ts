@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 
-import registerController from "../controllers/refreshTokenController.js";
+import registerController from "../controllers/registerController.js";
 import loginController from "../controllers/loginController.js";
 import refreshTokenController from "../controllers/refreshTokenController.js";
 import logOutController  from "../controllers/logOutController.js";

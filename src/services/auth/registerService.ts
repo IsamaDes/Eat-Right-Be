@@ -1,16 +1,10 @@
+import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../../models/User.js";
-import generateTokenAndHash from "../../utils/tokenUtils.js";
-import {validateRegistrationInput,  sanitizeInput, isValidEmail, isStrongPassword,} from "../../utils/validation.js";
+import validateRegistrationInput from "../../utils/validation.js";
 
-interface RegisteredUserResponse {
-  id: string;
-  email: string;
-  role: string;
-  token: string;
-}
 
-const registerUser = async (name: string, email: string, password: string, role: string): Promise<RegisteredUserResponse> =>{
+const registerUser = async (name: string, email: string, password: string, role: string, res: Response ) => {
 
   const { valid, errors, sanitized } = validateRegistrationInput({
     name,
@@ -24,31 +18,30 @@ const registerUser = async (name: string, email: string, password: string, role:
 
   const cleanEmail = sanitized.email.toLowerCase();
 
-  const existing = await User.findOne({ email: email.toLowerCase() });
+  const existing = await User.findOne({ email: cleanEmail });
+
   if (existing) throw new Error("User already exists");
 
   const hashed = await bcrypt.hash(sanitized.password, 10);
 
-  const { token, tokenHash } = generateTokenAndHash();
 
   const user = new User({
     name: sanitized.name,
     email: cleanEmail,
     password: hashed,
     role,
-    tokenHash,
-    tokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
+  console.log("just before saving user", user)
 
   await user.save();
 
+console.log("✅ Registration successful for:", user.email, user._id);
+
   return {
-  
-  id: user._id.toString(),
+  id: user._id,
+  name: user.name,
   email: user.email,
   role: user.role,
-  token,
-
 };
   
 };

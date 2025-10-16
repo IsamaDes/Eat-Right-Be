@@ -1,6 +1,7 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import Nutritionist from  "../../models/User.js"; 
 import Client from "../../models/User.js";
+import { createMealPlanService } from "../../services/nutritionService.js";
 
 // Extend Request type to include user injected by `protect`
 interface AuthenticatedRequest extends Request {
@@ -50,6 +51,25 @@ export const getClients = async (req: AuthenticatedRequest, res: Response) => {
   } catch (error: any) {
     console.error("Error fetching clients:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+
+
+
+export const createMealPlan = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?._id; // set by protect middleware (from cookie)
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized: no valid token" });
+    }
+
+    const mealPlan = await createMealPlanService(userId, req.body);
+    res.status(201).json({ success: true, data: mealPlan });
+  } catch (err: any) {
+    next(err);
   }
 };
 
