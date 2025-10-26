@@ -1,9 +1,11 @@
 import MealPlan, { IMealPlan } from "../models/MealPlan.js";
 import User from "../models/User.js";
+import { mealPlanRepository } from "../repositories/mealPlanRepository.js";
+import { UserRepository } from "../repositories/userRepository.js";
 
 export const createMealPlanService = async (userId: string, data: any): Promise<IMealPlan> => {
   // Step 1: Verify the user exists and is an admin or nutritionist
-  const user = await User.findById(userId);
+  const user = await UserRepository.findById(userId);
   if (!user) throw new Error("User not found");
   if (user.role !== "admin" && user.role !== "nutritionist") {
     throw new Error("Access denied: only admins or nutritionists can create meal plans");
@@ -25,8 +27,8 @@ export const createMealPlanService = async (userId: string, data: any): Promise<
     throw new Error("Missing required meal plan information");
   }
 
-  // Step 4: Save to database
-  const mealPlan = await MealPlan.create({
+  // Step 4: create and Save to database
+  const mealPlan = await mealPlanRepository.create({
     clientId,
     clientName,
     nutritionistName: user.name,
@@ -43,7 +45,7 @@ export const createMealPlanService = async (userId: string, data: any): Promise<
 
 
 export const getMealPlansService = async (userId: string, filters: any = {}) => {
-  const user = await User.findById(userId);
+  const user = await UserRepository.findById(userId);
   if (!user) throw new Error("User not found");
 
   // Admins see all; nutritionists see only their own; clients see their plans
@@ -78,13 +80,13 @@ export const getMealPlansService = async (userId: string, filters: any = {}) => 
 
 // Update Meal Plan
 export const updateMealPlanService = async (userId: string, mealPlanId: string, updates: any) => {
-  const user = await User.findById(userId);
+  const user = await UserRepository.findById(userId);
   if (!user) throw new Error("User not found");
   if (user.role !== "admin" && user.role !== "nutritionist") {
     throw new Error("Access denied: only admins or nutritionists can update meal plans");
   }
 
-  const mealPlan = await MealPlan.findById(mealPlanId);
+  const mealPlan = await mealPlanRepository.findById(mealPlanId);
   if (!mealPlan) throw new Error("Meal plan not found");
 
   // Optionally, nutritionist can only edit their own created plans
@@ -92,19 +94,18 @@ export const updateMealPlanService = async (userId: string, mealPlanId: string, 
     throw new Error("You can only update your own meal plans");
   }
 
-  Object.assign(mealPlan, updates);
-  await mealPlan.save();
+  const updateMealPlan = mealPlanRepository.update(mealPlanId, updates)
 
-  return mealPlan;
+  return updateMealPlan;
 };
 
 
 // Get Single Meal Plan by ID
 export const getMealPlanByIdService = async (userId: string, mealPlanId: string) => {
-  const user = await User.findById(userId);
+  const user = await UserRepository.findById(userId);
   if (!user) throw new Error("User not found");
 
-  const mealPlan = await MealPlan.findById(mealPlanId);
+  const mealPlan = await mealPlanRepository.findById(mealPlanId);
   if (!mealPlan) throw new Error("Meal plan not found");
 
   // Access control logic
@@ -118,4 +119,19 @@ export const getMealPlanByIdService = async (userId: string, mealPlanId: string)
 
   return mealPlan;
 };
+
+export const deleteMealPlanService = async(userId: string, mealPlanId: string) => {
+    const user = await UserRepository.findById(userId);
+    if(!user) throw new Error("User not found");
+    const mealPlan = await mealPlanRepository.findById(mealPlanId);
+    if(!mealPlan) throw new Error("Meal plan not found");
+    if(user.role === "client" && mealPlan.clientId !== user._id) {
+      throw new Error("Access denied: you can only view your own meal plans");
+    };
+    if(user.role === "nutritionist" && mealPlan.nutritionistName !== user.name) {
+      throw new Error("Access denied: you can only delete meal plans you created");
+    };
+    
+    return await mealPlanRepository.delete(mealPlanId)
+}
 
