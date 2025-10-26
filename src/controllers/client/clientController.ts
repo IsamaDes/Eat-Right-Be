@@ -1,26 +1,15 @@
-import { Request, Response } from "express";
-import User from "../../models/User";
+import { Response } from "express";
+import { UserRepository } from "../../repositories/userRepository";
+import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 
-// Extend Request type for TypeScript
-interface AuthenticatedRequest extends Request {
-  user?: any;
-}
 
-/**
- * GET /api/client/profile
- * Returns the logged-in client's profile
- */
+// Returns the logged-in client's profile
  const getClientProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
+    if(!userId) throw new Error("Invalid user Id")
 
-    const client = await User.findById(userId).select(
-      "-password -tokenHash -tokenExpiry"
-    );
-
-    if (!client) {
-      return res.status(404).json({ message: "Client not found" });
-    }
+    const client = await UserRepository.findById(userId)
 
     res.status(200).json({
       success: true,

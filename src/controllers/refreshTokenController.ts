@@ -1,4 +1,3 @@
-// src/controllers/authController.ts
 import { Request, Response } from "express";
 import { refreshAccessToken } from "../services/auth/refreshTokenService";
 

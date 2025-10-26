@@ -14,8 +14,6 @@ const logoutUserController = async (req: Request, res: Response) => {
       sameSite: "strict",
     });
     res.status(200).json({ message: 'Logged out successfully' });
-
-
  }catch(err: any){
 console.error("Logout error:", err);
     res.status(500).json({ 

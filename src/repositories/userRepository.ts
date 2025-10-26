@@ -2,7 +2,16 @@ import User from "../models/User.js";
 
 export const UserRepository = {
     async findByEmail(email: string){ return await User.findOne({email: email.toLowerCase()})},
-    async findById(id: string){ return await User.findById(id)},
+    async findClientsByNutritionist(nutritionistId: string){
+        return await User.find({nutritionist: nutritionistId})
+    },
+    async findById(id: string){ 
+        const user = await User.findById(id);
+       if(!user){
+        throw new Error(`User with ID ${id} not found`)
+       }
+       return user
+    },
     async save(user: any){
         return await user.save()
     },
@@ -10,11 +19,11 @@ export const UserRepository = {
         const user = new User(userData);
         return await user.save()
     },
-    async createBlacklistedToken(refreshToken: string, expiresAt: Date){
-       const user = new User({token: refreshToken, expiresAt})
-       return await user.save();
+
+    async countByRole(role: string){
+        return await User.countDocuments({role});
     },
-    async findByRefreshToken(refreshToken: string){
-        return await User.findOne({refreshToken});
+    async findLatestByRole(role: string, limit = 5){
+        return await User.find({role}).sort({createdAt: -1}).limit(limit).select("name, email, createdAt")
     }
 }

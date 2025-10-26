@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../../repositories/userRepository.js";
+import { TokenRepository } from "../../repositories/tokenRepository.js";
 
 interface DecodedToken {
   exp: number;
@@ -15,13 +16,8 @@ const logoutUser = async (refreshToken: string): Promise<void> => {
     }
   const expiresAt = new Date(decoded.exp * 1000);
 
-  await UserRepository.createBlacklistedToken(refreshToken, expiresAt);
+  await TokenRepository.blacklistToken(refreshToken, expiresAt);
 
-  const user = await UserRepository.findByRefreshToken(refreshToken);
-  if (user) {
-    user.refreshToken = "";
-    await UserRepository.save(user);
-  };
 }
   catch(error){
     throw new Error(`Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
