@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   age: { type: Number, default: null },
   healthHistory: [{ type: String, default: [] }],
   wellness_goal: { type: String, default: null },
+  meal_plans: [{ type: mongoose.Schema.Types.ObjectId, ref: "MealPlan" }],
   loginAttempts: { type: Number, default: 0 },
   lockUntil: { type: Date, default: null },
   refreshToken: { type: String },

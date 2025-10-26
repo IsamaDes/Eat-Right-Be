@@ -2,7 +2,7 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { generateAccessToken } from "../../utils/tokenUtils.js";
-import User from "../../models/User.js";
+import { UserRepository } from "../../repositories/userRepository.js";
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
   console.log("refrshTokenAccessToken is being hit")
@@ -12,7 +12,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 try{
  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
 
-  const user = await User.findById(decoded.userId);
+  const user = await UserRepository.findById(decoded.userId);
 
     if (!user) {
       console.log("❌ User not found for ID:", decoded.userId);

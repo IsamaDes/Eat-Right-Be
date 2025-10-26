@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../../models/User.js";
-import BlacklistedToken from "../../models/BlackListedToken.js";
+import { UserRepository } from "../../repositories/userRepository.js";
 
 interface DecodedToken {
   exp: number;
@@ -16,12 +15,12 @@ const logoutUser = async (refreshToken: string): Promise<void> => {
     }
   const expiresAt = new Date(decoded.exp * 1000);
 
-  await BlacklistedToken.create({ token: refreshToken, expiresAt });
+  await UserRepository.createBlacklistedToken(refreshToken, expiresAt);
 
-  const user = await User.findOne({ refreshToken });
+  const user = await UserRepository.findByRefreshToken(refreshToken);
   if (user) {
     user.refreshToken = "";
-    await user.save();
+    await UserRepository.save(user);
   };
 }
   catch(error){

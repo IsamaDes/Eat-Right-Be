@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from  "jsonwebtoken";
 import User from "../../models/User.js";
 import sendAuthCookies from "../../utils/cookiesStore.js";
+import { UserRepository } from "../../repositories/userRepository.js";
 
 
 const LOCK_TIME = 30 * 60 * 1000; // 30 minutes in ms
@@ -40,7 +41,7 @@ console.log("🔹 Login attempt email:", email.toLowerCase());
       user.lockUntil = new Date(Date.now() + LOCK_TIME);
       user.loginAttempts = 0; // reset count after locking
     }
-      await user!.save();
+      await UserRepository!.save(user);
     throw new Error("Invalid credentials");
   }
     
@@ -49,7 +50,7 @@ console.log("🔹 Login attempt email:", email.toLowerCase());
   user.lockUntil = null as any;
 
 
-  await user!.save();
+  await UserRepository!.save(user);
 
   const accessToken = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET!, {
     expiresIn: "30m",
