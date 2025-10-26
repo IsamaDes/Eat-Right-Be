@@ -1,7 +1,6 @@
 import type{ Response} from "express";
 import bcrypt from "bcryptjs";
 import jwt from  "jsonwebtoken";
-import User from "../../models/User.js";
 import sendAuthCookies from "../../utils/cookiesStore.js";
 import { UserRepository } from "../../repositories/userRepository.js";
 
@@ -10,19 +9,11 @@ const LOCK_TIME = 30 * 60 * 1000; // 30 minutes in ms
 const MAX_ATTEMPTS = 3;
 
 
-/**
- * Login a user with email and password.
- * Handles account locking and sets secure cookies for tokens.
- */
-
 const loginUser = async (email: string, password: string, res: Response) => {
   
 
   if (!email || !password) throw new Error("Email and password required");
-console.log("🔹 Login attempt email:", email.toLowerCase());
-
-  const user = await User.findOne({ email: email.toLowerCase() });
-  console.log("🔍 Found user:", user);
+  const user = await UserRepository.findByEmail(email);
   if (!user) throw new Error("User not found");
 
   //Check if account is locked
@@ -61,16 +52,8 @@ console.log("🔹 Login attempt email:", email.toLowerCase());
     { expiresIn: "7d" } 
   );
 
-  console.log("🔑 Access Token:", accessToken);
-console.log("🔑 Refresh Token:", refreshToken);
-console.log("🔑 JWT_SECRET exists:", !!process.env.JWT_SECRET);
-console.log("🔑 JWT_REFRESH_SECRET exists:", !!process.env.JWT_REFRESH_SECRET);
-
 // Store tokens in secure cookies
   sendAuthCookies(res, accessToken, refreshToken);
-
-  console.log("✅ Login successful for:", user.email);
-
 
   return {
     success: true,
@@ -82,8 +65,6 @@ console.log("🔑 JWT_REFRESH_SECRET exists:", !!process.env.JWT_REFRESH_SECRET)
       role: user.role,
     },
   };
-
-  
 };
 
 export default  loginUser;

@@ -84,11 +84,7 @@
  *                   example: Something went wrong
  */
 
-
-
-
 import type { Request, Response, NextFunction } from "express";
-
 import loginUser from "../services/auth/loginService";
 
 const loginController = async (req: Request, res: Response, next: NextFunction) => {
@@ -97,7 +93,7 @@ const loginController = async (req: Request, res: Response, next: NextFunction) 
     const response = await loginUser(email, password, res);
     res.status(200).json(response);
   } catch (err: any) {
-      console.error("💥 LoginController Error:", err.message);
+      console.error("Login Error:", err.message);
     next(err);
   }
 };
