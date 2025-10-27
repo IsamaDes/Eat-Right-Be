@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Response, NextFunction } from "express";
 import { createMealPlanService,getMealPlansService, updateMealPlanService, getMealPlanByIdService } from "../../services/nutrition"
 import { UserRepository } from "../../repositories/userRepository.js";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware.js";
@@ -7,8 +7,7 @@ import { AuthenticatedRequest } from "../../middleware/authMiddleware.js";
  //Returns the profile of the logged-in nutritionist
 export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user?._id; 
-    if(!userId) throw new Error("invalid user id")
+    const userId = req.user!._id; 
     const nutritionist = await UserRepository.findById(userId);
   
     res.status(200).json({
@@ -25,9 +24,7 @@ export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Res
  // Returns all clients assigned to the logged-in nutritionist
 export const getClients = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const nutritionistId = req.user?._id;
-    if(!nutritionistId) throw new Error("Invalid nutritionist Id")
-    
+    const nutritionistId = req.user!._id;    
     // Find all clients assigned to this nutritionist
     const clients = await UserRepository.findClientsByNutritionist(nutritionistId);
     res.status(200).json({ success: true, data: clients });
@@ -38,12 +35,9 @@ export const getClients = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 
-export const createMealPlan = async (req: Request, res: Response, next: NextFunction) => {
+export const createMealPlan = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user?._id;
-    if (!userId) {
-      return res.status(401).json({ message: "Unauthorized: no valid token" });
-    }
+    const userId = req.user!._id;
     const mealPlan = await createMealPlanService(userId, req.body);
     res.status(201).json({ success: true, data: mealPlan });
   } catch (err: any) {
@@ -52,9 +46,9 @@ export const createMealPlan = async (req: Request, res: Response, next: NextFunc
 };
 
 
-export const getMealPlans = async (req: Request, res: Response, next: NextFunction) => {
+export const getMealPlans = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user!._id;
     const result = await getMealPlansService(userId, req.query);
     res.status(200).json({ success: true, ...result });
   } catch (err: any) {
@@ -63,9 +57,9 @@ export const getMealPlans = async (req: Request, res: Response, next: NextFuncti
 };
 
 
-export const updateMealPlan = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMealPlan = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user!._id;
     const { id } = req.params;
     const updatedPlan = await updateMealPlanService(userId, id, req.body);
     res.status(200).json({ success: true, data: updatedPlan });
@@ -74,9 +68,9 @@ export const updateMealPlan = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const getMealPlanById = async (req: Request, res: Response, next: NextFunction) => {
+export const getMealPlanById = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user!._id;
     const { id } = req.params;
 
     const mealPlan = await getMealPlanByIdService(userId, id);

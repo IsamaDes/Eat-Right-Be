@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { UserRepository } from "../../repositories/userRepository.js";
 import { TokenRepository } from "../../repositories/tokenRepository.js";
 
 interface DecodedToken {

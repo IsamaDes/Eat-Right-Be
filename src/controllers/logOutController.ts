@@ -7,7 +7,9 @@ const logoutUserController = async (req: Request, res: Response) => {
  try{
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) return res.sendStatus(204);
-    await logOutUser(refreshToken)
+
+    await logOutUser(refreshToken);
+    
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
