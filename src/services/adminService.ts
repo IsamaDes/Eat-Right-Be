@@ -18,8 +18,7 @@ export const getAdminDashboardService = async() => {
     },
     latestClients,
   };
- 
-}
+};
 
 export const createUserService = async(name: string, email: string, password: string, role: string) => {
    if(!name || !email || !role){

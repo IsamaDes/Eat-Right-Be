@@ -11,9 +11,6 @@ export default async (): Promise<Config> => {
     tsconfig: "tsconfig.test.json",
     }] },
 
-  //    moduleNameMapper: {
-  //   "^(\\.{1,2}/.*)\\.js$": "$1.ts", // map .js imports to .ts files
-  // },
   }
   
 };

@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose, { Schema } from "mongoose"
 
 const userSchema = new mongoose.Schema({
   name: { type: String, trim: true },
@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   age: { type: Number, default: null },
   healthHistory: [{ type: String, default: [] }],
+  assignedNutritionist: { type: Schema.Types.ObjectId, ref: "User", required: true, default: null },
   wellness_goal: { type: String, default: null },
   meal_plans: [{ type: mongoose.Schema.Types.ObjectId, ref: "MealPlan" }],
   loginAttempts: { type: Number, default: 0 },

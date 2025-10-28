@@ -1,8 +1,8 @@
 import type{ Response} from "express";
 import bcrypt from "bcryptjs";
 import jwt from  "jsonwebtoken";
-import sendAuthCookies from "../../utils/cookiesStore.js";
-import { UserRepository } from "../../repositories/userRepository.js";
+import sendAuthCookies from "../../utils/cookiesStore";
+import { UserRepository } from "../../repositories/userRepository";
 
 
 const LOCK_TIME = 30 * 60 * 1000; // 30 minutes in ms
