@@ -3,7 +3,7 @@ const router = express.Router();
 
 import protect from "../middleware/authMiddleware.js";
 import authorizeRoles from "../middleware/roleMiddleware.js";
-import getAdminDashboard from "../controllers/admin/adminController.js";
+import {getAdminDashboard} from "../controllers/admin/adminController.js";
 
 
 

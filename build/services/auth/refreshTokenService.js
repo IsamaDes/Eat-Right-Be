@@ -5,20 +5,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshAccessToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const User_js_1 = __importDefault(require("../../models/User.js"));
-const refreshAccessToken = async (refreshToken) => {
+const tokenUtils_js_1 = require("../../utils/tokenUtils.js");
+const userRepository_js_1 = require("../../repositories/userRepository.js");
+const refreshAccessToken = async (req, res) => {
+    console.log("refrshTokenAccessToken is being hit");
+    const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken)
-        throw new Error("No token provided");
-    const decoded = jsonwebtoken_1.default.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    const user = await User_js_1.default.findById(decoded.userId);
-    if (!user)
-        throw new Error("Invalid token");
-    // Check: token matches the one stored in DB
-    if (user.refreshToken !== refreshToken) {
-        throw new Error("Token mismatch");
+        throw new Error("No Refresh token provided");
+    try {
+        const decoded = jsonwebtoken_1.default.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+        const user = await userRepository_js_1.UserRepository.findById(decoded.userId);
+        if (!user) {
+            console.log("❌ User not found for ID:", decoded.userId);
+            return res.status(401).json({ message: "User not found" });
+        }
+        const newAccessToken = (0, tokenUtils_js_1.generateAccessToken)(user._id.toString());
+        res.cookie("accessToken", newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 30 * 60 * 1000,
+        });
+        console.log("✅ New access token set");
+        res.json({ message: "Token refreshed" });
     }
-    // ✅ Create new access token
-    const newAccessToken = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "15m" });
-    return newAccessToken;
+    catch (err) {
+        console.error("Error refreshing token:", err);
+        return res.status(403).json({ message: "Invalid or expired refresh token" });
+    }
 };
 exports.refreshAccessToken = refreshAccessToken;

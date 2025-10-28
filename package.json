@@ -6,7 +6,7 @@
   "main": "build/server.js",
   "scripts": {
     "dev": "tsx src/server.ts",
-    "test": "jest --runInBand",
+    "test": "jest",
     "build": "tsc",
     "start": "node build/server.js"
   },
@@ -71,6 +71,7 @@
     "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "esbuild-register": "^3.6.0",
     "jest": "^30.2.0",
     "nodemon": "^3.0.3",
     "supertest": "^7.1.4",

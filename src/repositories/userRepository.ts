@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User from "../models/User";
 
 export const UserRepository = {
     async findByEmail(email: string){ return await User.findOne({email: email.toLowerCase()})},

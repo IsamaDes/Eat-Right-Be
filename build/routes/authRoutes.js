@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
-const refreshTokenController_js_1 = __importDefault(require("../controllers/refreshTokenController.js"));
+const registerController_js_1 = __importDefault(require("../controllers/registerController.js"));
 const loginController_js_1 = __importDefault(require("../controllers/loginController.js"));
-const refreshTokenController_js_2 = __importDefault(require("../controllers/refreshTokenController.js"));
+const refreshTokenController_js_1 = __importDefault(require("../controllers/refreshTokenController.js"));
 const logOutController_js_1 = __importDefault(require("../controllers/logOutController.js"));
 /**
  * @swagger
@@ -51,7 +51,7 @@ const logOutController_js_1 = __importDefault(require("../controllers/logOutCont
  *       400:
  *         description: Invalid request
  */
-router.post("/register", refreshTokenController_js_1.default);
+router.post("/register", registerController_js_1.default);
 /**
  * @swagger
  * /api/auth/login:
@@ -81,6 +81,6 @@ router.post("/register", refreshTokenController_js_1.default);
  *         description: Invalid credentials
  */
 router.post("/login", loginController_js_1.default);
-router.post("/refresh-token", refreshTokenController_js_2.default);
+router.post("/refresh-token", refreshTokenController_js_1.default);
 router.post("/logout", logOutController_js_1.default);
 exports.default = router;
