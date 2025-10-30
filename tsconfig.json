@@ -13,7 +13,7 @@
     "allowJs": true,
     "checkJs": false,
     "moduleDetection": "force",
-    "types": ["node", "express"]
+    "types": ["node"]
   },
   "include": ["src/**/*",],
   "exclude": ["node_modules", "build"]
