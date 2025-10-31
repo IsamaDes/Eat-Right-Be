@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import {AuthenticatedRequest} from "../../middleware/authMiddleware";
-import { createUserService, getAdminDashboardService } from "../../services/adminService";
+import { createUserService, getAdminDashboardService, getUserByIdService } from "../../services/adminService";
 
 // * Returns basic stats for the admin dashboard
  export const getAdminDashboard = async (req: AuthenticatedRequest, res: Response) => {
@@ -13,6 +13,21 @@ import { createUserService, getAdminDashboardService } from "../../services/admi
   
   } catch (error: any) {
     console.error("Admin dashboard error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {id} = req.params;
+    const user = await getUserByIdService(id);
+      res.status(200).json({
+      success: true,
+      User: user,
+    });
+  
+  } catch (error: any) {
+    console.error("User not found error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

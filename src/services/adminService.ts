@@ -9,6 +9,9 @@ export const getAdminDashboardService = async() => {
   ]);
 
   const latestClients = await UserRepository.findLatestByRole("client", 5);
+  const clients = await UserRepository.findAllUsersByRole("client");
+  const nutritionist = await UserRepository.findAllUsersByRole("nutritionist");
+  const admin = await UserRepository.findAllUsersByRole("admin");
 
    return {
     total: {
@@ -17,6 +20,9 @@ export const getAdminDashboardService = async() => {
       admins: adminCount,
     },
     latestClients,
+    clients,
+    nutritionist,
+    admin
   };
 };
 
@@ -30,3 +36,7 @@ export const createUserService = async(name: string, email: string, password: st
     return {id: user.id, email: user.email};
 }
 
+export const getUserByIdService = async(id: string) => {
+  const existingUser = await UserRepository.findById(id);
+ return existingUser
+}
