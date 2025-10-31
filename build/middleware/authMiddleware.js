@@ -4,33 +4,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const User_js_1 = __importDefault(require("../models/User.js"));
+const userRepository_js_1 = require("../repositories/userRepository.js");
 /**
  * Middleware to protect routes.
  * Verifies JWT token and attaches user info to req.user.
  */
 const protect = async (req, res, next) => {
-    let token;
-    // Look for "Bearer <token>" in Authorization header
-    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-        try {
-            token = req.headers.authorization.split(" ")[1];
-            const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-            // Fetch user from DB (without password)
-            const user = await User_js_1.default.findById(decoded.id).select("-password");
-            if (!user) {
-                return res.status(401).json({ message: "User not found" });
-            }
-            req.user = user; // Attach user to request
-            next();
+    try {
+        const token = req.cookies?.accessToken;
+        if (!token) {
+            console.log("No access token in cookies");
+            return res.status(401).json({ message: "Unauthorized: No token provided" });
         }
-        catch (err) {
-            console.error("JWT verification failed:", err);
-            return res.status(401).json({ message: "Token invalid or expired" });
-        }
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        // Fetch user from DB (without password)
+        const user = await userRepository_js_1.UserRepository.findById(decoded.id);
+        req.user = { _id: user._id.toString(), email: user.email, role: user.role }; // Attach user to request
+        next();
     }
-    else {
-        return res.status(401).json({ message: "No token provided" });
+    catch (err) {
+        console.error("JWT verification failed:", err);
+        return res.status(401).json({ message: "Token invalid or expired" });
     }
 };
 exports.default = protect;

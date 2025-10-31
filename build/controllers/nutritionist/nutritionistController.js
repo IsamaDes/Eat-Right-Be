@@ -1,22 +1,13 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getClients = exports.getNutritionistProfile = void 0;
-const User_js_1 = __importDefault(require("../../models/User.js"));
-const User_js_2 = __importDefault(require("../../models/User.js"));
-/**
- * GET /api/nutritionist/profile
- * Returns the profile of the logged-in nutritionist
- */
+exports.getMealPlanById = exports.updateMealPlan = exports.getMealPlans = exports.createMealPlan = exports.getClients = exports.getNutritionistProfile = void 0;
+const nutrition_1 = require("../../services/nutrition");
+const userRepository_js_1 = require("../../repositories/userRepository.js");
+//Returns the profile of the logged-in nutritionist
 const getNutritionistProfile = async (req, res) => {
     try {
-        const userId = req.user._id; // user is attached by `protect` middleware
-        const nutritionist = await User_js_1.default.findById(userId).select("-password -tokenHash");
-        if (!nutritionist) {
-            return res.status(404).json({ message: "Nutritionist not found" });
-        }
+        const userId = req.user._id;
+        const nutritionist = await userRepository_js_1.UserRepository.findById(userId);
         res.status(200).json({
             success: true,
             data: nutritionist,
@@ -28,15 +19,12 @@ const getNutritionistProfile = async (req, res) => {
     }
 };
 exports.getNutritionistProfile = getNutritionistProfile;
-/**
- * GET /api/nutritionist/clients
- * Returns all clients assigned to the logged-in nutritionist
- */
+// Returns all clients assigned to the logged-in nutritionist
 const getClients = async (req, res) => {
     try {
         const nutritionistId = req.user._id;
-        // Example: assuming Client model has a field `nutritionist: ObjectId`
-        const clients = await User_js_2.default.find({ nutritionist: nutritionistId }).select("-password -tokenHash -tokenExpiry");
+        // Find all clients assigned to this nutritionist
+        const clients = await userRepository_js_1.UserRepository.findClientsByNutritionist(nutritionistId);
         res.status(200).json({ success: true, data: clients });
     }
     catch (error) {
@@ -45,3 +33,49 @@ const getClients = async (req, res) => {
     }
 };
 exports.getClients = getClients;
+const createMealPlan = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const mealPlan = await (0, nutrition_1.createMealPlanService)(userId, req.body);
+        res.status(201).json({ success: true, data: mealPlan });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.createMealPlan = createMealPlan;
+const getMealPlans = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const result = await (0, nutrition_1.getMealPlansService)(userId, req.query);
+        res.status(200).json({ success: true, ...result });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.getMealPlans = getMealPlans;
+const updateMealPlan = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const { id } = req.params;
+        const updatedPlan = await (0, nutrition_1.updateMealPlanService)(userId, id, req.body);
+        res.status(200).json({ success: true, data: updatedPlan });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.updateMealPlan = updateMealPlan;
+const getMealPlanById = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const { id } = req.params;
+        const mealPlan = await (0, nutrition_1.getMealPlanByIdService)(userId, id);
+        res.status(200).json({ success: true, data: mealPlan });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.getMealPlanById = getMealPlanById;

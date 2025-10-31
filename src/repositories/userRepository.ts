@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User from "../models/User";
 
 export const UserRepository = {
     async findByEmail(email: string){ return await User.findOne({email: email.toLowerCase()})},
@@ -23,7 +23,10 @@ export const UserRepository = {
     async countByRole(role: string){
         return await User.countDocuments({role});
     },
+    async findAllUsersByRole(role: string){
+     return await User.find({role}).select("name email createdAt assignedNutritionist").sort({ createdAt: -1 });
+    },
     async findLatestByRole(role: string, limit = 5){
-        return await User.find({role}).sort({createdAt: -1}).limit(limit).select("name, email, createdAt")
+        return await User.find({role}).sort({createdAt: -1}).limit(limit).select("name email createdAt")
     }
 }

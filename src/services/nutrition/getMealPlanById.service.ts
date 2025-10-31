@@ -1,6 +1,5 @@
-import { IMealPlan } from "../../models/MealPlan.js";
-import { mealPlanRepository } from "../../repositories/mealPlanRepository.js";
-import { UserRepository } from "../../repositories/userRepository.js";
+import { mealPlanRepository } from "../../repositories/mealPlanRepository";
+import { UserRepository } from "../../repositories/userRepository";
 
 
 // Get Single Meal Plan by ID

@@ -6,17 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const authMiddleware_js_1 = __importDefault(require("../middleware/authMiddleware.js"));
-// const  authorizeRoles  = require("../middleware/roleMiddleware");
-// const getAdminDashboard  = require("../controllers/admin/adminController");
+const roleMiddleware_js_1 = __importDefault(require("../middleware/roleMiddleware.js"));
+const adminController_js_1 = require("../controllers/admin/adminController.js");
 // Only admins can access dashboard
-// router.get(
-//   "/dashboard",
-//   protect,                  // User must be logged in
-//   authorizeRoles("admin"),  // User must be admin
-//   getAdminDashboard
-// );
-// Example: general admin route that any logged-in user can see (rare for admin)
-router.get("/profile", authMiddleware_js_1.default, (req, res) => {
-    res.json({ message: "This is the admin profile page", user: req.user });
-});
+router.get("/dashboard", authMiddleware_js_1.default, // User must be logged in
+(0, roleMiddleware_js_1.default)("admin"), // User must be admin
+adminController_js_1.getAdminDashboard);
 exports.default = router;

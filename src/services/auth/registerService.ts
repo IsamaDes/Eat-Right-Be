@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import validateRegistrationInput from "../../utils/validation.js";
-import { UserRepository } from "../../repositories/userRepository.js";
+import validateRegistrationInput from "../../utils/validation";
+import { UserRepository } from "../../repositories/userRepository";
 
 
 const registerUser = async (name: string, email: string, password: string, role: string, res: Response ) => {

@@ -1,20 +1,13 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const User_1 = __importDefault(require("../../models/User"));
-/**
- * GET /api/client/profile
- * Returns the logged-in client's profile
- */
+const userRepository_1 = require("../../repositories/userRepository");
+// Returns the logged-in client's profile
 const getClientProfile = async (req, res) => {
     try {
-        const userId = req.user._id;
-        const client = await User_1.default.findById(userId).select("-password -tokenHash -tokenExpiry");
-        if (!client) {
-            return res.status(404).json({ message: "Client not found" });
-        }
+        const userId = req.user?._id;
+        if (!userId)
+            throw new Error("Invalid user Id");
+        const client = await userRepository_1.UserRepository.findById(userId);
         res.status(200).json({
             success: true,
             data: client,

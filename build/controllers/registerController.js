@@ -92,13 +92,21 @@ const registerService_js_1 = __importDefault(require("../services/auth/registerS
 const registerController = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body;
-        if (!name || !email || !password || !role)
-            return res.status(400).json({ message: "All fields are required" });
-        const response = await (0, registerService_js_1.default)(name, email, password, role);
-        res.status(201).json(response);
+        const result = await (0, registerService_js_1.default)(name, email, password, role, res);
+        res.status(201).json({
+            message: "User registered successfully",
+            user: {
+                id: result.id,
+                name: result.name,
+                email: result.email,
+                role: result.role,
+            },
+        });
     }
-    catch (err) {
-        next(err);
+    catch (error) {
+        console.error("Registration error:", error.message);
+        res.status(400).json({ message: error.message });
+        next(error);
     }
 };
 exports.default = registerController;
