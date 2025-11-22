@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from  "jsonwebtoken";
 import sendAuthCookies from "../../utils/cookiesStore";
 import { UserRepository } from "../../repositories/userRepository";
+import { BadRequestError, NotFoundError, UnauthorizedError } from "../../errors";
 
 
 const LOCK_TIME = 30 * 60 * 1000; // 30 minutes in ms
@@ -12,14 +13,14 @@ const MAX_ATTEMPTS = 3;
 const loginUser = async (email: string, password: string, res: Response) => {
   
 
-  if (!email || !password) throw new Error("Email and password required");
+  if (!email || !password) throw new BadRequestError("Email and password required");
   const user = await UserRepository.findByEmail(email);
-  if (!user) throw new Error("User not found");
+  if (!user) throw new UnauthorizedError("Invalid credentials");
 
   //Check if account is locked
     if (user.lockUntil && user.lockUntil.getTime() > Date.now()) {
     const minutesLeft = Math.ceil((user.lockUntil.getTime() - Date.now()) / 60000);
-    throw new Error(`Account locked. Try again in ${minutesLeft} minutes`);
+    throw new UnauthorizedError(`Account locked. Try again in ${minutesLeft} minutes`);
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
@@ -33,7 +34,7 @@ const loginUser = async (email: string, password: string, res: Response) => {
       user.loginAttempts = 0; // reset count after locking
     }
       await UserRepository!.save(user);
-    throw new Error("Invalid credentials");
+    throw new UnauthorizedError("Invalid credentials");
   }
     
   // Reset failed attempts if successful

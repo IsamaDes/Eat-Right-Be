@@ -1,7 +1,7 @@
 import type { Response, NextFunction } from "express";
 import { createMealPlanService,getMealPlansService, updateMealPlanService, getMealPlanByIdService } from "../../services/nutrition"
-import { UserRepository } from "../../repositories/userRepository.js";
-import { AuthenticatedRequest } from "../../middleware/authMiddleware.js";
+import { UserRepository } from "../../repositories/userRepository";
+import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 
 
  //Returns the profile of the logged-in nutritionist

@@ -1,8 +1,8 @@
 
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { generateAccessToken } from "../../utils/tokenUtils.js";
-import { UserRepository } from "../../repositories/userRepository.js";
+import { generateAccessToken } from "../../utils/tokenUtils";
+import { UserRepository } from "../../repositories/userRepository";
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
   console.log("refrshTokenAccessToken is being hit")
@@ -28,7 +28,7 @@ try{
       maxAge: 30 * 60 * 1000,
     });
 
-  console.log("✅ New access token set");  
+  console.log("New access token set");  
   res.json({ message: "Token refreshed" });
 
 }catch (err) {

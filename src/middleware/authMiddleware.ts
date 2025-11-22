@@ -1,8 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 
-import User from "../models/User.js";
 import Jwt, { JwtPayload }  from "jsonwebtoken";
-import { UserRepository } from "../repositories/userRepository.js";
+import { UserRepository } from "../repositories/userRepository";
 
 
 export interface AuthenticatedRequest extends Request {

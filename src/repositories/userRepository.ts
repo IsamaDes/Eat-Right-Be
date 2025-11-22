@@ -1,14 +1,18 @@
+import { NotFoundError } from "../errors";
 import User from "../models/User";
 
 export const UserRepository = {
-    async findByEmail(email: string){ return await User.findOne({email: email.toLowerCase()})},
+    async findByEmail(email: string){ 
+        const user = await User.findOne({email: email.toLowerCase()})
+        return user
+    },
     async findClientsByNutritionist(nutritionistId: string){
         return await User.find({nutritionist: nutritionistId})
     },
     async findById(id: string){ 
         const user = await User.findById(id);
        if(!user){
-        throw new Error(`User with ID ${id} not found`)
+        throw new NotFoundError(`User with ID ${id} not found`)
        }
        return user
     },
@@ -28,5 +32,8 @@ export const UserRepository = {
     },
     async findLatestByRole(role: string, limit = 5){
         return await User.find({role}).sort({createdAt: -1}).limit(limit).select("name email createdAt")
+    },
+    async deleteAll(){
+        return await User.deleteMany({})
     }
 }

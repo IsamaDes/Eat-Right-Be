@@ -84,7 +84,7 @@
  *                   example: Something went wrong
  */
 
-import registerUser from "../services/auth/registerService.js";
+import registerUser from "../services/auth/registerService";
 import type { Request, Response, NextFunction } from "express";
 
 
@@ -92,19 +92,10 @@ const registerController = async (req: Request, res: Response, next: NextFunctio
    try {
     const { name, email, password, role } = req.body;
     const result = await registerUser(name, email, password, role, res);
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        id: result.id,
-        name: result.name,
-        email: result.email,
-        role: result.role,
-      },
-    });
-  }catch (error: any) {
-    console.error("Registration error:", error.message);
-    res.status(400).json({ message: error.message });
-    next(error);
+    res.status(201).json(result);
+  }catch (err) {
+    console.error("Register error:", err);
+    next(err);
   }
 };
 

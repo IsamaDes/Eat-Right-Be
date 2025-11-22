@@ -10,8 +10,6 @@ export default async (): Promise<Config> => {
      useESM: true,
     tsconfig: "tsconfig.test.json",
     }] },
-
   }
-  
 };
 

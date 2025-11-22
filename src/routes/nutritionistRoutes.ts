@@ -1,9 +1,9 @@
 import express from "express";
 const router = express.Router();
 
-import protect from "../middleware/authMiddleware.js";
-import authorizeRoles from "../middleware/roleMiddleware.js";
-import {getNutritionistProfile, getClients, createMealPlan, getMealPlans, updateMealPlan, getMealPlanById} from "../controllers/nutritionist/nutritionistController.js";
+import protect from "../middleware/authMiddleware";
+import authorizeRoles from "../middleware/roleMiddleware";
+import {getNutritionistProfile, getClients, createMealPlan, getMealPlans, updateMealPlan, getMealPlanById} from "../controllers/nutritionist/nutritionistController";
 
 router.use(protect);
 // Nutritionist-only routes

@@ -1,47 +1,22 @@
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
+import { logger } from "../utils/logger";
+import { AppError } from "../errors/AppError";
 
-/**
- * Middleware for handling 404 Not Found errors
- */
-const notFound = (req: Request, res: Response, next: NextFunction) => {
-  const error = new Error(`Not Found - ${req.originalUrl}`);
-  res.status(404);
-  next(error);
-};
+export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+  const isOperational = err instanceof AppError;
 
-/**
- * Middleware for handling invalid credentials (401)
- */
-const invalidCredentials = (req: Request, res: Response, next: NextFunction) => {
-  const error = new Error("Invalid Credentials");
-  res.status(401);
-  next(error);
-};
+  logger.error({
+    message: err.message,
+    stack: err.stack,
+    path: req.url,
+    details: err.details ?? null,
+  }, "Error occurred");
 
-/**
- * Middleware for handling bad request (400)
- */
-const badRequest = (req: Request, res: Response, next: NextFunction) => {
-  const error = new Error("Bad Request");
-  res.status(400);
-  next(error);
-};
+  const status = isOperational ? err.status : 500;
 
-/**
- * Global error handler middleware
- */
-const errorHandler = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode).json({
-    message: err.message || "Something went wrong",
-    stack: process.env.NODE_ENV === "production" ? null : err.stack,
+  res.status(status).json({
+    success: false,
+    errorType: err.constructor?.name || "UnknownError",
+    message: err.message || "Internal Server Error",
   });
 };
-
-
-export { notFound, invalidCredentials, badRequest, errorHandler };
