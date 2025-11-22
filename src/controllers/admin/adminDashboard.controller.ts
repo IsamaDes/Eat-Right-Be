@@ -3,7 +3,7 @@ import {AuthenticatedRequest} from "../../middleware/authMiddleware";
 import { createUserService, getAdminDashboardService, getUserByIdService } from "../../services/adminService";
 import { UserRepository } from "../../repositories/userRepository";
 
-// * Returns basic stats for the admin dashboard
+// Returns basic stats for the admin dashboard
  export const getAdminDashboard = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const dashboardData = await getAdminDashboardService();
@@ -51,16 +51,22 @@ try{
 };
 
 export const assignNutritionistToClient = async(req: AuthenticatedRequest, res: Response) => {
-  try{
+ 
   const {clientId, nutritionistId} = req.body;
    if (!clientId || !nutritionistId) {
-      return res.status(400).json({ success: false, message: "Missing IDs" });
+      return res.status(400)
+      .json({ success: false, message: "Both clientId and nutritionistId are required." });
     }
-  const client = await UserRepository.findById(clientId);
-  const nutritionist = await UserRepository.findById(nutritionistId);
+
+  try{
+  const [client, nutritionist] = await Promise.all([
+    UserRepository.findById(clientId), 
+    UserRepository.findById(nutritionistId)
+  ]);
 
    if (!nutritionist || nutritionist.role !== "nutritionist") {
-      return res.status(400).json({ success: false, message: "Invalid nutritionist" });
+      return res.status(400).
+      json({ success: false, message: "Invalid nutritionist" });
     }
 
 
@@ -72,8 +78,13 @@ export const assignNutritionistToClient = async(req: AuthenticatedRequest, res: 
       message: `Nutritionist ${nutritionist.name} assigned to ${client.name}`,
       client,
     });
-  }catch(err){
-   console.error("Error assigning nutritionist:", err);
+  }catch(err: any){
+   console.error("[assignNutritionistToClient] Error:", {
+      error: err.message,
+      stack: err.stack,
+      body: req.body,
+      user: req.user?._id,
+    });
     res.status(500).json({ success: false, message: "Server error" });
   }
   

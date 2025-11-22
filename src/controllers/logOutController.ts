@@ -1,6 +1,6 @@
 
 import { Request, Response } from "express";
-import logOutUser from "../services/auth/logOutService.js"
+import logOutUser from "../services/auth/logOutService"
 
 
 const logoutUserController = async (req: Request, res: Response) => {

@@ -92,8 +92,8 @@ const loginController = async (req: Request, res: Response, next: NextFunction) 
     const { email, password } = req.body;
     const response = await loginUser(email, password, res);
     res.status(200).json(response);
-  } catch (err: any) {
-      console.error("Login Error:", err.message);
+  } catch (err) {
+  console.error("login error:", err);
     next(err);
   }
 };

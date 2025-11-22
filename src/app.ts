@@ -3,19 +3,22 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./config/swagger.js";
-import authRoutes from "./routes/authRoutes.js";
-import clientRoutes from "./routes/clientRoutes.js";
-import nutritionistRoutes from "./routes/nutritionistRoutes.js"
-import adminRoutes from "./routes/adminRoutes.js";
+import swaggerSpec from "./config/swagger";
+import authRoutes from "./routes/authRoutes";
+import clientRoutes from "./routes/clientRoutes";
+import nutritionistRoutes from "./routes/nutritionistRoutes"
+import adminRoutes from "./routes/adminRoutes";
+import { NotFoundError } from "./errors";
 import {
-  notFound,
   errorHandler,
-  badRequest,
-  invalidCredentials,
-} from "./middleware/errorMiddleware.js";
+} from "./middleware/errorMiddleware";
 
 const app = express();
+
+if (process.env.NODE_ENV !== "test") {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
+
 
 app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin);
@@ -53,7 +56,6 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req, res) => res.send("API is running"));
 app.use("/auth", authRoutes);
@@ -61,9 +63,9 @@ app.use("/admin", adminRoutes);
 app.use("/client", clientRoutes);
 app.use("/nutritionist", nutritionistRoutes);
 
+app.use((req, res, next) => {
+  next(new NotFoundError(`Route ${req.originalUrl} not found`));
+});
 app.use(errorHandler);
-app.use(badRequest);
-app.use(invalidCredentials);
-app.use(notFound);
 
 export default app;

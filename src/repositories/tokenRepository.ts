@@ -1,4 +1,4 @@
-import BlacklistedToken from "../models/BlackListedToken.js";
+import BlacklistedToken from "../models/BlackListedToken";
 
 export const TokenRepository = {
   async blacklistToken(refreshToken: string, expiresAt: Date) {

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-import { TokenRepository } from "../../repositories/tokenRepository.js";
+import { TokenRepository } from "../../repositories/tokenRepository";
+import { BadRequestError, UnauthorizedError } from "../../errors";
 
 interface DecodedToken {
   exp: number;
@@ -11,7 +12,7 @@ const logoutUser = async (refreshToken: string): Promise<void> => {
     try{
   const decoded = jwt.decode(refreshToken) as DecodedToken;
    if (!decoded || !decoded.exp) {
-      throw new Error("Invalid token format");
+      throw new UnauthorizedError("Invalid token format");
     }
   const expiresAt = new Date(decoded.exp * 1000);
 
@@ -19,7 +20,7 @@ const logoutUser = async (refreshToken: string): Promise<void> => {
 
 }
   catch(error){
-    throw new Error(`Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new BadRequestError(`Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
 

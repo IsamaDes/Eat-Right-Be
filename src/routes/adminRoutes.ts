@@ -1,9 +1,9 @@
 import express from "express";
 const router = express.Router();
 
-import protect from "../middleware/authMiddleware.js";
-import authorizeRoles from "../middleware/roleMiddleware.js";
-import {getAdminDashboard, getUserById, assignNutritionistToClient} from "../controllers/admin/adminDashboard.controller.js";
+import protect from "../middleware/authMiddleware";
+import authorizeRoles from "../middleware/roleMiddleware";
+import {getAdminDashboard, getUserById, assignNutritionistToClient} from "../controllers/admin/adminDashboard.controller";
 
 
 router.use(protect)

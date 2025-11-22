@@ -1,8 +1,8 @@
 import express from "express";
 const router = express.Router();
-import protect from "../middleware/authMiddleware.js";
-import authorizeRoles from "../middleware/roleMiddleware.js";
-import getClientProfile from "../controllers/client/clientController.js";
+import protect from "../middleware/authMiddleware";
+import authorizeRoles from "../middleware/roleMiddleware";
+import getClientProfile from "../controllers/client/clientController";
 
 
 
