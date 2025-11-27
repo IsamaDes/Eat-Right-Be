@@ -33,6 +33,9 @@ export const UserRepository = {
     async findLatestByRole(role: string, limit = 5){
         return await User.find({role}).sort({createdAt: -1}).limit(limit).select("name email createdAt")
     },
+    async updateById(userId: string, updates: any){
+        
+    },
     async deleteAll(){
         return await User.deleteMany({})
     }
