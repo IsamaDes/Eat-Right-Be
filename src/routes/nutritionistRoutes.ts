@@ -30,7 +30,9 @@ router.post(
 );
 
 router.get("/", authorizeRoles("admin", "nutritionist", "client"),
-cacheMiddleware(req => `mealplans:user:${req.user?.id}`, 600),
+
+cacheMiddleware(
+  req => `mealplans:user:${req.user?.id}`, 600),
 getMealPlans);
 
 router.put(

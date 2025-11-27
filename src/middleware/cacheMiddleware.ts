@@ -1,10 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import redis from "../utils/redis";
 
-export const cacheMiddleware = (keyGenerator: (req: Request) => string, ttl = 3600) => {
+export const cacheMiddleware = (
+  keyGenerator: (req: Request) => string | null, 
+  ttl = 3600) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+         const userId = req.user?._id;
+         if (userId) return next();
+
       const key = keyGenerator(req);
+      if (!key) return next();
 
       const cachedData = await redis.get(key);
       if (cachedData) {

@@ -5,7 +5,6 @@ dotenv.config();
 import request from "supertest";
 import app from "../../src/app";
 import { UserRepository } from "../../src/repositories/userRepository";
-import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
 describe("Auth Integration Tests", () => {

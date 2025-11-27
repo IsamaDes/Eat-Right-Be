@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { getUserProfile } from "../controllers/user/userController";
 import { cacheMiddleware } from "../middleware/cacheMiddleware";
+import protect from "../middleware/authMiddleware";
+
 
 const router = Router();
+
+router.use(protect);
 
 router.get(
   "/users/:id",
