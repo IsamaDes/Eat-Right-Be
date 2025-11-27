@@ -5,4 +5,10 @@ node_modules/
 
 build/
 
-test
+coverage/
+
+jest-output/
+
+.nyc_output/
+
+logs/
