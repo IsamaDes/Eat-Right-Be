@@ -2,6 +2,8 @@ import type { Response, NextFunction } from "express";
 import { createMealPlanService,getMealPlansService, updateMealPlanService, getMealPlanByIdService } from "../../services/nutrition"
 import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
+import { commentOnMealPlanService } from "../../services/nutrition/commentMealPlan.service";
+import { BadRequestError, NotFoundError } from "../../errors";
 
 
  //Returns the profile of the logged-in nutritionist
@@ -79,3 +81,32 @@ export const getMealPlanById = async (req: AuthenticatedRequest, res: Response, 
     next(err);
   }
 };
+
+export const commentOnProject = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try{
+     const { text } = req.body;
+     const mealPlanId = req.params.id
+     const authorId = req.params.authorId;
+     
+     console.log("Commenting on meal:", mealPlanId);
+
+      if (!text || !mealPlanId || !authorId) {
+      throw new BadRequestError("Text, mealPlanId and authorId are required");
+    }
+
+  const updatedMealPlan = await commentOnMealPlanService(text, mealPlanId, authorId);
+
+    if (!updatedMealPlan) {
+      throw new NotFoundError("Meal plan not found");
+    }
+
+  return res.status(200).json({
+     success: true,
+      message: "Comment added successfully",
+      data: updatedMealPlan,
+  });
+  }  
+  catch(err){
+    next(err)
+  }
+}

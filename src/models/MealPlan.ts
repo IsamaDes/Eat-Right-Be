@@ -17,6 +17,13 @@ interface WeeklyMealPlan {
   dailyPlans: DailyMealPlan[];
 }
 
+interface Comment {
+text: string;
+mealPlanId: string;
+authorId: string;
+createdAt: Date;
+}
+
 export interface IMealPlan extends Document {
   clientName: string;
   nutritionistName: string;
@@ -27,6 +34,7 @@ export interface IMealPlan extends Document {
   healthGoal: string;
   nutritionalRequirement: string;
   weeklyMealPlans: WeeklyMealPlan[];
+  comments: Comment[];
 }
 
 const mealPlanSchema = new Schema<IMealPlan>(
@@ -61,6 +69,12 @@ const mealPlanSchema = new Schema<IMealPlan>(
             ],
           },
         ],
+      },
+    ],
+     comments: [
+      {
+        text: String,
+        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
       },
     ],
   },
