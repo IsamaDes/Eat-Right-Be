@@ -17,3 +17,8 @@ export const updateUserProfileService = async (userId: string, updates: any) => 
 
   return updatedUser;
 };
+
+export const getUserByIdService = async(id: string) => {
+  const existingUser = await UserRepository.findById(id);
+ return existingUser
+}

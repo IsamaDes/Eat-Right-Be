@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserProfile } from "../controllers/user/userController";
+import { getCurrentUser, getUserProfile } from "../controllers/user/userController";
 import { cacheMiddleware } from "../middleware/cacheMiddleware";
 import protect from "../middleware/authMiddleware";
 
@@ -13,5 +13,10 @@ router.get(
   cacheMiddleware(req => `user:${req.params.id}`, 3600), 
   getUserProfile
 );
+
+router.get(
+  "/me",
+  cacheMiddleware(req => `user:${req.params.id}`, 3600),
+  getCurrentUser);
 
 export default router;

@@ -1,10 +1,11 @@
 import { Response } from "express";
 import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
+import { UnauthorizedError } from "../../errors";
 
 
 // Returns the logged-in client's profile
- const getClientProfile = async (req: AuthenticatedRequest, res: Response) => {
+ export const getClientProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?._id;
     if(!userId) throw new Error("Invalid user Id")
@@ -21,4 +22,3 @@ import { AuthenticatedRequest } from "../../middleware/authMiddleware";
   }
 };
 
-export default getClientProfile;

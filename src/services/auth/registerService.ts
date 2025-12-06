@@ -35,17 +35,15 @@ const registerUser = async (name: string, email: string, password: string, role:
 console.log("Registration successful for:", user.email, user._id);
 
   return {
-     success: true,
+  success: true,
   message: "Registration successful",
   data: {
     id: user._id,
-  name: user.name,
-  email: user.email,
-  role: user.role,
+    name: user.name,
+    email: user.email,
+    role: user.role,
   }
-  
 };
-  
 };
 
 export default registerUser;

@@ -8,6 +8,9 @@ import authRoutes from "./routes/authRoutes";
 import clientRoutes from "./routes/clientRoutes";
 import nutritionistRoutes from "./routes/nutritionistRoutes"
 import adminRoutes from "./routes/adminRoutes";
+import userRoutes from "./routes/userRoutes"
+import chatRoutes from "./routes/chatRoutes"
+
 import { NotFoundError } from "./errors";
 import {
   errorHandler,
@@ -62,6 +65,8 @@ app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/client", clientRoutes);
 app.use("/nutritionist", nutritionistRoutes);
+app.use("/user", userRoutes);
+app.use("/chats", chatRoutes)
 
 app.use((req, res, next) => {
   next(new NotFoundError(`Route ${req.originalUrl} not found`));
