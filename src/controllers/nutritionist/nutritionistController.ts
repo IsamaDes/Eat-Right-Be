@@ -27,7 +27,6 @@ export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Res
 export const getClients = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const nutritionistId = req.user!._id;    
-    // Find all clients assigned to this nutritionist
     const clients = await UserRepository.findClientsByNutritionist(nutritionistId);
     res.status(200).json({ success: true, data: clients });
   } catch (error: any) {
@@ -70,11 +69,11 @@ export const updateMealPlan = async (req: AuthenticatedRequest, res: Response, n
   }
 };
 
+
 export const getMealPlanById = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!._id;
     const { id } = req.params;
-
     const mealPlan = await getMealPlanByIdService(userId, id);
     res.status(200).json({ success: true, data: mealPlan });
   } catch (err: any) {
@@ -82,19 +81,18 @@ export const getMealPlanById = async (req: AuthenticatedRequest, res: Response, 
   }
 };
 
+
 export const commentOnProject = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try{
      const { text } = req.body;
      const mealPlanId = req.params.id
-     const authorId = req.params.authorId;
-     
-     console.log("Commenting on meal:", mealPlanId);
-
-      if (!text || !mealPlanId || !authorId) {
+     const userId = req.params.userId;
+    
+      if (!text || !mealPlanId || !userId) {
       throw new BadRequestError("Text, mealPlanId and authorId are required");
     }
 
-  const updatedMealPlan = await commentOnMealPlanService(text, mealPlanId, authorId);
+  const updatedMealPlan = await commentOnMealPlanService({text, mealPlanId, userId});
 
     if (!updatedMealPlan) {
       throw new NotFoundError("Meal plan not found");

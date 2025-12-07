@@ -5,15 +5,15 @@ import { UserRepository } from "../../repositories/userRepository";
 export const getMealPlansService = async (userId: string, filters: any = {}) => {
   const user = await UserRepository.findById(userId);
 
-  // Admins see all; doctor see only their own; patients see their plans
+  // Admins see all; nutritionist see only their own; clients see their plans
   const query: any = {};
   if (user.role === "nutritionist") {
-    query.doctorName = user.name;
+    query.nutritionistName = user.name;
   } else if (user.role === "client") {
-    query.patientId = user._id;
+    query.clientId = user.id;
   }
 
-  if (filters.patientName) query.patientName = { $regex: filters.patientName, $options: "i" };
+  if (filters.clientName) query.clientName = { $regex: filters.clientName, $options: "i" };
 
   const page = Number(filters.page) || 1;
   const limit = Number(filters.limit) || 10;

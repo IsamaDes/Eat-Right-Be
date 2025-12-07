@@ -1,5 +1,11 @@
 import { prisma } from "../lib/prisma";
 
+export type CreateCommentInput = {
+  text: string;
+  mealPlanId: string;
+  userId: string;
+};
+
 export const mealPlanRepository = {
  
   async create(mealPlanData: any) {
@@ -8,6 +14,11 @@ export const mealPlanRepository = {
     });
   },
 
+  async comment(input: CreateCommentInput){
+     return prisma.mealPlanComment.create({
+      data: input
+     })
+  },
   
   async save(mealPlan: any) {
     return prisma.mealPlan.update({

@@ -23,9 +23,7 @@ export const getCurrentUser = async (req: AuthenticatedRequest, res: Response) =
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-
     const user = await getUserByIdService(req.user._id);
-
     return res.status(200).json({
       status: "success",
       user,

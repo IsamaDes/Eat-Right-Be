@@ -2,18 +2,13 @@ import { BadRequestError } from "../../errors";
 import { mealPlanRepository } from "../../repositories/mealPlanRepository";
 
 
-export const commentOnMealPlanService = async (text: string, mealPlanId: string, authorId: string) => {
-  console.log("🧠 Commenting on meal:", mealPlanId);
+export const commentOnMealPlanService = async (data: {text: string, mealPlanId: string, userId: string}) => {
+  console.log("Commenting on meal:", data.mealPlanId);
 
-  const mealPlan = await mealPlanRepository.findById(mealPlanId);
+  const mealPlan = await mealPlanRepository.findById(data.mealPlanId);
    if (!mealPlan) throw new BadRequestError("Meal plan not found");
-    const newComment = {text, mealPlanId, authorId, createdAt: new Date() }
-    mealPlan?.comments.push(newComment);
+   const newComment = await mealPlanRepository.comment(data);
  
-  //refecth to get the comment details for frontend
-   const savedMealPlan = await mealPlanRepository.save(mealPlan);
-   return savedMealPlan;
-
-
+  return newComment;
  
 }

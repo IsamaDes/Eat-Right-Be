@@ -3,7 +3,7 @@ const router = express.Router();
 
 import protect from "../middleware/authMiddleware";
 import authorizeRoles from "../middleware/roleMiddleware";
-import {getAdminDashboard, getUserById, assignNutritionistToClient} from "../controllers/admin/adminDashboard.controller";
+import {getAdminDashboard, getUserById, assignNutritionistToClient} from "../controllers/admin/adminDashboardController";
 
 
 router.use(protect)

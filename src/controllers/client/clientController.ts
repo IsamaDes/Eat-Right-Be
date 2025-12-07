@@ -8,7 +8,7 @@ import { UnauthorizedError } from "../../errors";
  export const getClientProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?._id;
-    if(!userId) throw new Error("Invalid user Id")
+    if(!userId) throw new UnauthorizedError("Invalid user Id")
 
     const client = await UserRepository.findById(userId)
 

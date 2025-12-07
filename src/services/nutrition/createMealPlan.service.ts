@@ -1,8 +1,8 @@
-import { IMealPlan } from "../../models/MealPlan";
+import { MealPlan } from "../../models/MealPlan";
 import { mealPlanRepository } from "../../repositories/mealPlanRepository";
 import { verifyNutritionistAccess } from "./nutritionAccess.service";
 
-export const createMealPlanService = async (userId: string, data: any): Promise<IMealPlan> => {
+export const createMealPlanService = async (userId: string, data: any) => {
   // Step 1: Verify the user exists and is an admin or nutritionist
     const user = await verifyNutritionistAccess(userId);
 
