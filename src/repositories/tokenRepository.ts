@@ -1,12 +1,13 @@
-import BlacklistedToken from "../models/BlackListedToken";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 export const TokenRepository = {
   async blacklistToken(refreshToken: string, expiresAt: Date) {
-    return await BlacklistedToken.create({ token: refreshToken, expiresAt });
+    return await prisma.blacklistedToken.create({data: { token: refreshToken, expiresAt }});
   },
 
   async isTokenBlacklisted(refreshToken: string) {
-    const token = await BlacklistedToken.findOne({ token: refreshToken });
+    const token = await prisma.blacklistedToken.findFirst({where: { token: refreshToken }});
     return !!token; 
   },
 };

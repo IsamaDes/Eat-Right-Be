@@ -1,17 +1,3 @@
-import mongoose, { Schema } from "mongoose";
+import {prisma} from "../lib/prisma.js"
 
-const chatSchema = new mongoose.Schema(
-  {
-    sender_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    receiver_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    message: { type: String, required: true },
-    message_type: {
-      type: String,
-      enum: ["text", "image", "file"],
-      default: "text",
-    },
-  },
-  { timestamps: true }
-);
-
-export default mongoose.model("Chat", chatSchema);
+export const Chat = prisma.chatMessage;

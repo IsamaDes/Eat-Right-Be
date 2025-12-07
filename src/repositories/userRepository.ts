@@ -1,42 +1,93 @@
+import { prisma,  } from "../lib/prisma";
+import { UserRole } from "@prisma/client"; 
 import { NotFoundError } from "../errors";
-import User from "../models/User";
 
 export const UserRepository = {
-    async findByEmail(email: string){ 
-        const user = await User.findOne({email: email.toLowerCase()})
-        return user
-    },
-    async findClientsByNutritionist(nutritionistId: string){
-        return await User.find({nutritionist: nutritionistId})
-    },
-    async findById(id: string){ 
-        const user = await User.findById(id);
-       if(!user){
-        throw new NotFoundError(`User with ID ${id} not found`)
-       }
-       return user
-    },
-    async save(user: any){
-        return await user.save()
-    },
-    async create(userData: any){
-        const user = new User(userData);
-        return await user.save()
-    },
+  async findByEmail(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      include: {
+        clientProfile: true,
+        nutritionistProfile: true,
+        adminProfile: true,
+      },
+    });
+    return user;
+  },
 
-    async countByRole(role: string){
-        return await User.countDocuments({role});
-    },
-    async findAllUsersByRole(role: string){
-     return await User.find({role}).select("name email createdAt assignedNutritionist").sort({ createdAt: -1 });
-    },
-    async findLatestByRole(role: string, limit = 5){
-        return await User.find({role}).sort({createdAt: -1}).limit(limit).select("name email createdAt")
-    },
-    async updateById(userId: string, updates: any){
-        
-    },
-    async deleteAll(){
-        return await User.deleteMany({})
-    }
-}
+  async findClientsByNutritionist(nutritionistId: string) {
+    return prisma.clientProfile.findMany({
+      where: { assignedNutritionistId: nutritionistId },
+      include: { user: true },
+    });
+  },
+
+  async findById(id: string) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        clientProfile: true,
+        nutritionistProfile: true,
+        adminProfile: true,
+      },
+    });
+
+    if (!user) throw new NotFoundError(`User with ID ${id} not found`);
+    return user;
+  },
+
+  async save(user: any) {
+    return prisma.user.update({
+      where: { id: user.id },
+      data: user,
+    });
+  },
+
+  async create(userData: any) {
+    return prisma.user.create({
+      data: userData,
+    });
+  },
+
+  async countByRole(role: string) {
+    return prisma.user.count({
+      where: { role: role as UserRole },
+    });
+  },
+
+  async findAllUsersByRole(role: string) {
+    return prisma.user.findMany({
+      where: { role: role as UserRole },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        clientProfile: { select: { assignedNutritionistId: true } },
+        nutritionistProfile: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  },
+
+  async findLatestByRole(role: string, limit = 5) {
+    return prisma.user.findMany({
+      where: { role: role as UserRole },
+      select: { id: true, name: true, email: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
+  },
+
+  async updateById(userId: string, updates: any) {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: updates,
+    });
+    return user;
+  },
+
+  async deleteAll() {
+    return prisma.user.deleteMany({});
+  },
+};

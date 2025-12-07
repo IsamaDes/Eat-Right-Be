@@ -1,22 +1,16 @@
-import Chat from "../models/Chat";
+import ChatRepository from "../repositories/chatRepository";
 
 export default class ChatService {
-  static async getMessages(sender_id: string, receiver_id: string) {
-    return await Chat.find({
-      $or: [
-        { sender_id, receiver_id },
-        { sender_id: receiver_id, receiver_id: sender_id },
-      ],
-    }).sort({ createdAt: 1 });
+  static async getMessages(senderId: string, receiverId: string) {
+    return ChatRepository.findMessages(senderId, receiverId);
   }
 
   static async sendMessage(data: {
-    sender_id: string;
-    receiver_id: string;
+    senderId: string;
+    receiverId: string;
     message: string;
-    message_type: string;
+    messageType: string;
   }) {
-    const msg = await Chat.create(data);
-    return msg;
+    return ChatRepository.createMessage(data);
   }
 }

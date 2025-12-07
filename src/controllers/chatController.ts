@@ -5,17 +5,17 @@ import { io } from "../utils/socket";
 export default class ChatController {
   static async getMessages(req: Request, res: Response) {
     try {
-      const { sender_id, receiver_id } = req.query;
+      const { senderId, receiverId } = req.query;
 
-      if (!sender_id || !receiver_id)
+      if (!senderId || !receiverId)
         return res.status(400).json({
           success: false,
           message: "sender_id and receiver_id are required",
         });
 
       const messages = await ChatService.getMessages(
-        sender_id as string,
-        receiver_id as string
+        senderId as string,
+        receiverId as string
       );
 
       res.json({ success: true, data: messages });
@@ -26,23 +26,23 @@ export default class ChatController {
 
   static async sendMessage(req: Request, res: Response) {
     try {
-      const { sender_id, receiver_id, message, message_type } = req.body;
+      const { senderId, receiverId, message, messageType } = req.body;
 
-      if (!sender_id || !receiver_id || !message)
+      if (!senderId || !receiverId || !message)
         return res.status(400).json({
           success: false,
-          message: "sender_id, receiver_id & message required",
+          message: "senderId, receiverId & message required",
         });
 
       const saved = await ChatService.sendMessage({
-        sender_id,
-        receiver_id,
+        senderId,
+        receiverId,
         message,
-        message_type,
+        messageType,
       });
 
       // Emit socket event to receiver
-      io.to(receiver_id).emit("new_message", saved);
+      io.to(receiverId).emit("new_message", saved);
 
       res.json({ success: true, data: saved });
     } catch (err: any) {
