@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS
+enum UserRole {
+  client
+  nutritionist
+  admin
+}
+
+enum AppointmentStatus {
+  pending
+  confirmed
+  completed
+  cancelled
+}
+
+enum MessageType {
+  text
+  image
+  file
+}
+
+enum MealType {
+  breakfast
+  lunch
+  dinner
+}
+
+// --------------------
+// USER MODEL
+// --------------------
+model User {
+  id                  String   @id @default(cuid())
+  name                String?
+  email               String   @unique
+  role                UserRole
+  password            String
+  age                 Int?
+  healthHistory       HealthHistory[]
+  assignedNutritionistId String?
+  assignedNutritionist User? @relation("NutritionistAssignments", fields: [assignedNutritionistId], references: [id])
+  mealPlans           MealPlan[] @relation("ClientMealPlans")
+  createdMealPlans    MealPlan[] @relation("NutritionistMealPlans")
+  loginAttempts       Int        @default(0)
+  lockUntil           DateTime?
+  refreshToken        String?
+  tokenHash           String?
+  tokenExpiry         DateTime?
+
+  // Relations
+  appointmentsAsDoctor  Appointment[] @relation("DoctorAppointments")
+  appointmentsAsPatient Appointment[] @relation("PatientAppointments")
+  chatsSent             ChatMessage[] @relation("SentMessages")
+  chatsReceived         ChatMessage[] @relation("ReceivedMessages")
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+// For healthHistory array
+model HealthHistory {
+  id     String @id @default(cuid())
+  userId String
+  value  String
+
+  user   User @relation(fields: [userId], references: [id])
+}
+
+
+// Blacklisted Tokens
+model BlacklistedToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+}
+
+// --------------------
+// APPOINTMENT MODEL
+// --------------------
+model Appointment {
+  id           String   @id @default(cuid())
+  date         DateTime?
+  doctorId     String
+  patientId    String
+  userId       String?
+  notes        String?
+  status       AppointmentStatus @default(pending)
+
+  doctor       User @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  patient      User @relation("PatientAppointments", fields: [patientId], references: [id])
+  user         User? @relation(fields: [userId], references: [id])
+}
+
+
+// CHAT MODEL
+model ChatMessage {
+  id          String      @id @default(cuid())
+  senderId    String
+  receiverId  String
+  message     String
+  messageType MessageType @default(text)
+
+  sender      User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+// AVAILABLE MEALS
+model AvailableMeal {
+  id            String   @id @default(cuid())
+  chefName      String?
+  mealName      String
+  nutrition     AvailableMealNutrition?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AvailableMealNutrition {
+  id          String  @id @default(cuid())
+  mealId      String  @unique
+  calories    Int?
+  protein     Int?
+  carbs       Int?
+  fat         Int?
+
+  meal        AvailableMeal @relation(fields: [mealId], references: [id])
+}
+
+// -----------------------
+// MEAL PLAN (complex nested)
+// -----------------------
+model MealPlan {
+  id                     String   @id @default(cuid())
+  clientId               String
+  nutritionistId         String
+  clientName             String
+  nutritionistName       String
+  dateRangeStart         DateTime
+  dateRangeEnd           DateTime
+  numberOfWeeks          Int
+  healthGoal             String
+  nutritionalRequirement String
+
+  client                 User @relation("ClientMealPlans", fields: [clientId], references: [id])
+  nutritionist           User @relation("NutritionistMealPlans", fields: [nutritionistId], references: [id])
+  weeklyMealPlans        WeeklyMealPlan[]
+  comments               MealPlanComment[]
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model WeeklyMealPlan {
+  id         String   @id @default(cuid())
+  mealPlanId String
+  weekNumber Int
+
+  mealPlan   MealPlan        @relation(fields: [mealPlanId], references: [id])
+  dailyPlans DailyMealPlan[]
+}
+
+model DailyMealPlan {
+  id           String   @id @default(cuid())
+  weeklyPlanId String
+  dayOfWeek    String
+
+  weeklyPlan   WeeklyMealPlan @relation(fields: [weeklyPlanId], references: [id])
+  meals        MealPlanMeal[]
+}
+
+model MealPlanMeal {
+  id                String   @id @default(cuid())
+  dailyMealPlanId   String
+  timeOfDay         String
+  typeOfMeal        MealType
+  food              String
+  nutritionalContent String
+
+  dailyMealPlan DailyMealPlan @relation(fields: [dailyMealPlanId], references: [id])
+}
+
+model MealPlanComment {
+  id        String   @id @default(cuid())
+  mealPlanId String
+  userId    String
+  text      String
+
+  mealPlan  MealPlan @relation(fields: [mealPlanId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+// -------------------------
+// FOOD MENU (complex)
+// -------------------------
+model FoodMenu {
+  id            String   @id @default(cuid())
+  dateCreated   DateTime @default(now())
+  dateRange     String?
+  nutritionistId String?
+
+  nutritionist  User? @relation(fields: [nutritionistId], references: [id])
+  weeks         FoodMenuWeek[]
+}
+
+model FoodMenuWeek {
+  id        String   @id @default(cuid())
+  foodMenuId String
+  weekNumber Int?
+
+  foodMenu  FoodMenu      @relation(fields: [foodMenuId], references: [id])
+  meals     FoodMenuMeal[]
+}
+
+model FoodMenuMeal {
+  id          String   @id @default(cuid())
+  foodMenuWeekId String
+  date        String?
+  day         String?
+  time        String?
+  meal        String?
+  mealName    String?
+  calories    Int?
+  ingredients Ingredient[]
+
+  week       FoodMenuWeek @relation(fields: [foodMenuWeekId], references: [id])
+}
+
+model Ingredient {
+  id     String @id @default(cuid())
+  mealId String
+  value  String
+
+  meal   FoodMenuMeal @relation(fields: [mealId], references: [id])
+}
