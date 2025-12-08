@@ -1,29 +1,18 @@
 import { Request, Response, NextFunction } from "express";
-import { getUserByIdService, getUserProfileService } from "../../services/userService";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
-
-export const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
-     try {
-    const userId = req.params.id;
-    const profile = await getUserProfileService(userId);
-
-    res.status(200).json({
-      success: true,
-      data: profile,
-    });
-  } catch (err) {
-    next(err);
-  }
-}
-
-
+import { getUserService } from "../../services/userService";
 
 export const getCurrentUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const user = await getUserByIdService(req.user._id);
+    const user = await getUserService.getCurrentUserService(req.user._id);
+
+       if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
     return res.status(200).json({
       status: "success",
       user,

@@ -1,20 +1,20 @@
-import mongoose from "mongoose"
+import { PrismaClient } from "@prisma/client";
+import { DatabaseConnectionError } from "../errors";
 
+export const prisma = new PrismaClient();
 
-const connectDB = async () => {
+export async function connectDB() {
   try {
-    const mongoUri = process.env.MONGO_URI;
-    
-    if (!mongoUri) {
-      throw new Error("MONGO_URI is not defined in environment variables");
+    await prisma.$connect();
+    console.log("🟢 Database connected successfully");
+  } catch (error) {
+    console.error("🔴 Failed to connect to the database");
+      if (error instanceof Error) {
+      console.error(error);
+      throw new DatabaseConnectionError(error.message);
     }
-    
-    await mongoose.connect(mongoUri);
-    console.log("MongoDB connected");
-  } catch (err: any) {
-    console.error(err.message);
-    process.exit(1);
+    throw new DatabaseConnectionError(
+       "Cannot connect to PostgreSQL. Check DATABASE_URL or network."
+    );
   }
-};
-
-export default connectDB; 
+}

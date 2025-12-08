@@ -7,9 +7,9 @@ export const getMealPlansService = async (userId: string, filters: any = {}) => 
 
   // Admins see all; nutritionist see only their own; clients see their plans
   const query: any = {};
-  if (user.role === "nutritionist") {
+  if (user.role === "NUTRITIONIST") {
     query.nutritionistName = user.name;
-  } else if (user.role === "client") {
+  } else if (user.role === "CLIENT") {
     query.clientId = user.id;
   }
 

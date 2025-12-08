@@ -1,24 +1,29 @@
+import { getCurrentUser } from "../controllers/user/userController";
 import { UserRepository } from "../repositories/userRepository";
-import { NotFoundError } from "../errors";
-import redis from "../utils/redis";
 
-export const getUserProfileService = async (userId: string) => {
-  const user = await UserRepository.findById(userId);
-  if (!user) throw new NotFoundError("User not found");
-  
-  return user;
-};
+export const getUserService = {
+    async getCurrentUserService(userId: string){
+      const user = await UserRepository.findById(userId);
+       if (!user) return null;
+       let profile = null;
+       switch (user.role) {
+      case "CLIENT":
+        profile = user.clientProfile;
+        break;
+      case "NUTRITIONIST":
+        profile = user.nutritionistProfile;
+        break;
+      case "ADMIN":
+        profile = user.adminProfile;
+        break;
+    }
 
-export const updateUserProfileService = async (userId: string, updates: any) => {
-  const updatedUser = await UserRepository.updateById(userId, updates);
-
-  // Invalidate Redis cache so middleware fetches fresh data next time
-    await redis.del(`user:${userId}`);
-
-  return updatedUser;
-};
-
-export const getUserByIdService = async(id: string) => {
-  const existingUser = await UserRepository.findById(id);
- return existingUser
+     return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profile,
+    };
+    }
 }

@@ -57,7 +57,8 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json()); // This is required to parse JSON bodies... was getting wrong input without it.... has to be before routes
+
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => res.send("API is running"));

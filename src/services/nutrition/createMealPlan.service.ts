@@ -1,4 +1,3 @@
-import { MealPlan } from "../../models/MealPlan";
 import { mealPlanRepository } from "../../repositories/mealPlanRepository";
 import { verifyNutritionistAccess } from "./nutritionAccess.service";
 

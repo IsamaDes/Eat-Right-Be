@@ -1,55 +1,27 @@
 import { prisma,  } from "../lib/prisma";
 import { UserRole } from "@prisma/client"; 
 import { NotFoundError } from "../errors";
-import { UserInput, UserSchema } from "../validators/UserValidator";
+import { RegisterSchema, RegisterInput} from "../utils/validators/UserValidator";
 import bcrypt from "bcryptjs"
 
 export const UserRepository = {
 
-//      async create(userData: UserInput) {
-//     return prisma.user.create({
-//       data: userData,
-//     });
-//   },
+  async createBaseUser(data: RegisterInput){
+    const parsed = RegisterSchema.parse(data);
+    const hashedPassword = await bcrypt.hash(parsed.password, 10);
 
-
-
- create: async (data: UserInput) => {
-    try {
-      console.log("data", data)
-      // Validate and transform input using Zod
-      const parsedData = UserSchema.parse(data);
-
-       const hashedPassword = await bcrypt.hash(parsedData.password, 10);
-      // Create user in DB
-      const user = await prisma.user.create({
-        data: {
-          ...parsedData,
-          email: parsedData.email.toLowerCase(),
-          password: hashedPassword,
-          subscription: parsedData.subscription ?? null,
-          age: parsedData.age ?? null,
-          healthGoal: parsedData.healthGoal ?? null,
-          role: parsedData.role ?? "CLIENT",
-          loginAttempts: parsedData.loginAttempts ?? 0,
-          lockUntil: parsedData.lockUntil ?? null, 
-        },
-      });
-
-      return user;
-    } catch (err: any) {
-      // Handle Zod validation errors or Prisma errors
-      if (err.name === "ZodError") {
-        throw new Error(
-          `Validation error: ${JSON.stringify(err.errors)}`
-        );
-      }
-      throw err;
-    }
+    return prisma.user.create({
+      data: {
+        name: parsed.name,
+        email: parsed.email.toLowerCase(),
+        password: hashedPassword,
+        role: parsed.role,
+      },
+    })
   },
 
-  async findByEmail(email: string) {
-    const user = await prisma.user.findUnique({
+   async findByEmail(email: string) {
+    return prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       include: {
         clientProfile: true,
@@ -57,17 +29,9 @@ export const UserRepository = {
         adminProfile: true,
       },
     });
-    return user;
   },
 
-  async findClientsByNutritionist(nutritionistId: string) {
-    return prisma.clientProfile.findMany({
-      where: { assignedNutritionistId: nutritionistId },
-      include: { user: true },
-    });
-  },
-
-  async findById(id: string) {
+   async findById(id: string) {
     const user = await prisma.user.findUnique({
       where: { id },
       include: {
@@ -81,52 +45,49 @@ export const UserRepository = {
     return user;
   },
 
-  async save(user: any) {
+   async updateUser(id: string, updates: any) {
     return prisma.user.update({
-      where: { id: user.id },
-      data: user,
+      where: { id },
+      data: updates,
     });
   },
 
-  async countByRole(role: string) {
-    return prisma.user.count({
-      where: { role: role as UserRole },
-    });
+ async countByRole(role: UserRole) {
+    return prisma.user.count({ where: { role } });
   },
 
-  async findAllUsersByRole(role: string) {
+  async findAllUsersByRole(role: UserRole) {
     return prisma.user.findMany({
-      where: { role: role as UserRole },
+      where: { role },
       select: {
         id: true,
         name: true,
         email: true,
         createdAt: true,
-        clientProfile: { select: { assignedNutritionistId: true } },
+        clientProfile: true,
         nutritionistProfile: true,
+        adminProfile: true,
       },
       orderBy: { createdAt: "desc" },
     });
   },
 
-  async findLatestByRole(role: string, limit = 5) {
+    async findLatestUsersByRole(role: UserRole, limit = 5) {
     return prisma.user.findMany({
-      where: { role: role as UserRole },
-      select: { id: true, name: true, email: true, createdAt: true },
+      where: { role },
       orderBy: { createdAt: "desc" },
       take: limit,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
     });
   },
 
-  async updateById(userId: string, updates: any) {
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: updates,
-    });
-    return user;
-  },
 
   async deleteAll() {
     return prisma.user.deleteMany({});
   },
-};
+}

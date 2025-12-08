@@ -91,6 +91,7 @@ import type { Request, Response, NextFunction } from "express";
 const registerController = async (req: Request, res: Response, next: NextFunction) => {
    try {
     const { name, email, password, role } = req.body;
+    console.log("in controller user with data:", { name, email, password, role });
     const result = await registerUser(name, email, password, role, res);
     res.status(201).json(result);
   }catch (err) {

@@ -11,11 +11,11 @@ export const getMealPlanByIdService = async (userId: string, mealPlanId: string)
   if (!mealPlan) throw new NotFoundError("Meal plan not found");
 
   // Access control logic
-  if (user.role === "client" && mealPlan.clientId !== user.id) {
+  if (user.role === "CLIENT" && mealPlan.clientId !== user.id) {
     throw new UnauthorizedError("Access denied: you can only view your own meal plans");
   }
 
-  if (user.role === "nutritionist" && mealPlan.nutritionistId !== user.id) {
+  if (user.role === "NUTRITIONIST" && mealPlan.nutritionistId !== user.id) {
     throw new UnauthorizedError("Access denied: you can only view meal plans you created");
   }
 

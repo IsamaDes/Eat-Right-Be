@@ -1,8 +1,11 @@
 import { AppError } from "./AppError";
 
 export class BadRequestError extends AppError {
-  constructor(message = "Bad Request") {
-    super(message, 400);
+    details: any;
+  constructor(message = "Bad Request", details?: any) {
+    super(message);
+    this.status = 400;
+    this.details = details || null;
   }
 }
 
@@ -33,5 +36,12 @@ export class ConflictError extends AppError {
 export class NetworkError extends AppError {
   constructor(message = "Network Error") {
     super(message, 503); 
+  }
+}
+
+
+export class DatabaseConnectionError extends AppError {
+  constructor(message = "Failed to connect to the database") {
+    super(message, 500); 
   }
 }

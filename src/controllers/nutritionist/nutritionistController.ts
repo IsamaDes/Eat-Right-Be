@@ -4,7 +4,9 @@ import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 import { commentOnMealPlanService } from "../../services/nutrition/commentMealPlan.service";
 import { BadRequestError, NotFoundError } from "../../errors";
+import { getNutritionistClients } from "../../services/nutrition";
 
+console.log("getNutritionistClients is:", getNutritionistClients);
 
  //Returns the profile of the logged-in nutritionist
 export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {
@@ -27,7 +29,7 @@ export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Res
 export const getClients = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const nutritionistId = req.user!._id;    
-    const clients = await UserRepository.findClientsByNutritionist(nutritionistId);
+    const clients = await getNutritionistClients(nutritionistId);
     res.status(200).json({ success: true, data: clients });
   } catch (error: any) {
     console.error("Error fetching clients:", error);

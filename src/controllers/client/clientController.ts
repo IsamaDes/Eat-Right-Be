@@ -2,6 +2,7 @@ import { Response } from "express";
 import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 import { UnauthorizedError } from "../../errors";
+import { ClientRepository } from "../../repositories/clientRepository";
 
 
 // Returns the logged-in client's profile
@@ -9,9 +10,7 @@ import { UnauthorizedError } from "../../errors";
   try {
     const userId = req.user?._id;
     if(!userId) throw new UnauthorizedError("Invalid user Id")
-
-    const client = await UserRepository.findById(userId)
-
+    const client = await ClientRepository.getClientProfile(userId)
     res.status(200).json({
       success: true,
       data: client,
