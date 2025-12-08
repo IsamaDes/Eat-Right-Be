@@ -6,8 +6,6 @@ import { commentOnMealPlanService } from "../../services/nutrition/commentMealPl
 import { BadRequestError, NotFoundError } from "../../errors";
 import { getNutritionistClients } from "../../services/nutrition";
 
-console.log("getNutritionistClients is:", getNutritionistClients);
-
  //Returns the profile of the logged-in nutritionist
 export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
