@@ -19,7 +19,7 @@ try{
       return res.status(401).json({ message: "User not found" });
     }
 
- const newAccessToken = generateAccessToken(user._id.toString())
+ const newAccessToken = generateAccessToken(user.id.toString())
 
  res.cookie("accessToken", newAccessToken, {
       httpOnly: true,

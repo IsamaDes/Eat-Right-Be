@@ -1,39 +1,93 @@
+import { prisma,  } from "../lib/prisma";
+import { UserRole } from "@prisma/client"; 
 import { NotFoundError } from "../errors";
-import User from "../models/User";
+import { RegisterSchema, RegisterInput} from "../utils/validators/UserValidator";
+import bcrypt from "bcryptjs"
 
 export const UserRepository = {
-    async findByEmail(email: string){ 
-        const user = await User.findOne({email: email.toLowerCase()})
-        return user
-    },
-    async findClientsByNutritionist(nutritionistId: string){
-        return await User.find({nutritionist: nutritionistId})
-    },
-    async findById(id: string){ 
-        const user = await User.findById(id);
-       if(!user){
-        throw new NotFoundError(`User with ID ${id} not found`)
-       }
-       return user
-    },
-    async save(user: any){
-        return await user.save()
-    },
-    async create(userData: any){
-        const user = new User(userData);
-        return await user.save()
-    },
 
-    async countByRole(role: string){
-        return await User.countDocuments({role});
-    },
-    async findAllUsersByRole(role: string){
-     return await User.find({role}).select("name email createdAt assignedNutritionist").sort({ createdAt: -1 });
-    },
-    async findLatestByRole(role: string, limit = 5){
-        return await User.find({role}).sort({createdAt: -1}).limit(limit).select("name email createdAt")
-    },
-    async deleteAll(){
-        return await User.deleteMany({})
-    }
+  async createBaseUser(data: RegisterInput){
+    const parsed = RegisterSchema.parse(data);
+    const hashedPassword = await bcrypt.hash(parsed.password, 10);
+
+    return prisma.user.create({
+      data: {
+        name: parsed.name,
+        email: parsed.email.toLowerCase(),
+        password: hashedPassword,
+        role: parsed.role,
+      },
+    })
+  },
+
+   async findByEmail(email: string) {
+    return prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      include: {
+        clientProfile: true,
+        nutritionistProfile: true,
+        adminProfile: true,
+      },
+    });
+  },
+
+   async findById(id: string) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        clientProfile: true,
+        nutritionistProfile: true,
+        adminProfile: true,
+      },
+    });
+
+    if (!user) throw new NotFoundError(`User with ID ${id} not found`);
+    return user;
+  },
+
+   async updateUser(id: string, updates: any) {
+    return prisma.user.update({
+      where: { id },
+      data: updates,
+    });
+  },
+
+ async countByRole(role: UserRole) {
+    return prisma.user.count({ where: { role } });
+  },
+
+  async findAllUsersByRole(role: UserRole) {
+    return prisma.user.findMany({
+      where: { role },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        clientProfile: true,
+        nutritionistProfile: true,
+        adminProfile: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  },
+
+    async findLatestUsersByRole(role: UserRole, limit = 5) {
+    return prisma.user.findMany({
+      where: { role },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    });
+  },
+
+
+  async deleteAll() {
+    return prisma.user.deleteMany({});
+  },
 }

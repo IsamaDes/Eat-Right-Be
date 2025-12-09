@@ -1,27 +1,35 @@
 //Input validation → check if the data has the right format/type.
 //clean/escape dangerous input to prevent injection attacks (like MongoDB operator injection or script injection).
 
-function sanitizeInput(value) {
+function sanitizeInput(value: string): string {
   if (typeof value !== "string") return value;
   return value.replace(/[<>{}$;]/g, "").trim();
 }
 
 //check for valid email
-function isValidEmail(email) {
+function isValidEmail(email: string) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
 //check password strength
-function isStrongPassword(password) {
+function isStrongPassword(password: string): boolean {
   const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
   return passRegex.test(password);
 }
 
+
+export interface RegistrationInput {
+  name: string;
+  email: string;
+  password: string;
+  role: "NUTRITIONIST" | "CLIENT" | "ADMIN"
+}
+
 //General validation Wrapper
-function validRegistrationInput({ name, email, password }) {
+function validRegistrationInput({ name, email, password, role}: RegistrationInput) {
   const errors = [];
-  if (!name || name.trim() < 2) {
+  if (!name || name.trim().length < 2) {
     errors.push("Name must be atleast two characters long");
   }
   if (!email || !isValidEmail(email)) {
@@ -31,7 +39,12 @@ function validRegistrationInput({ name, email, password }) {
     errors.push(
       "Password must be atleast 8 characters long and include uppercase, lowercase and a number"
     );
+    if (!role) {
+    errors.push(
+      "please provide a role"
+    );
   }
+}
 
   return {
     valid: errors.length === 0,

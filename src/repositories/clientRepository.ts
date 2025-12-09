@@ -1,0 +1,39 @@
+// src/repositories/clientRepository.ts
+import { prisma } from "../lib/prisma";
+import { UpdateClientProfileInput } from "../utils/validators/UserValidator";
+
+export const ClientRepository = {
+  async createClientProfile(userId: string) {
+    return prisma.clientProfile.create({
+      data: { userId },
+      include: {
+        user: true, 
+    },
+    });
+    
+  },
+
+  async getClientProfile(userId: string){
+    return prisma.clientProfile.findUnique({
+         where: { userId },
+         include: {
+           user: true,  
+        },
+    })
+  },
+
+  async updateClientProfile(userId: string, updates: Partial<UpdateClientProfileInput>) {
+    return prisma.clientProfile.update({
+      where: { userId },
+      data: updates,
+    });
+  },
+
+  
+  async findClientsByNutritionist(nutritionistId: string) {
+    return prisma.clientProfile.findMany({
+      where: { assignedNutritionistId: nutritionistId },
+      include: { user: true },
+    });
+  }
+};

@@ -1,36 +1,78 @@
-import MealPlan from "../models/MealPlan";
+import { prisma } from "../lib/prisma";
+
+export type CreateCommentInput = {
+  text: string;
+  mealPlanId: string;
+  userId: string;
+};
 
 export const mealPlanRepository = {
-
-async create(mealPlanData: any){
-    const mealPlan = new MealPlan(mealPlanData);
-    return await mealPlan.save();
-},
-
-async save(mealPlan: any){
-    return await mealPlan.save()
-},
-
-async findById(mealPlanId: string){
-    return await MealPlan.findById(mealPlanId);
-},
-
-async findByClientId(clientId: string){
-    return await MealPlan.findById({clientId}).populate("clientId");
-},
-
- async count(query: any) {
-    return await MealPlan.countDocuments(query);
+ 
+  async create(mealPlanData: any) {
+    return prisma.mealPlan.create({
+      data: mealPlanData,
+    });
   },
 
-async getFiltered(query: any, page = 1, limit = 10) {
-    const skip = (page - 1) * limit;
-    const mealPlans = await MealPlan.find(query)
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+  async comment(input: CreateCommentInput){
+     return prisma.mealPlanComment.create({
+      data: input
+     })
+  },
+  
+  async save(mealPlan: any) {
+    return prisma.mealPlan.update({
+      where: { id: mealPlan.id },
+      data: mealPlan,
+    });
+  },
 
-    const total = await MealPlan.countDocuments(query);
+ 
+  async findById(mealPlanId: string) {
+    return prisma.mealPlan.findUnique({
+      where: { id: mealPlanId },
+      include: {
+        client: true,
+        nutritionist: true,
+        weeklyMealPlans: { include: { dailyPlans: { include: { meals: true } } } },
+        comments: true,
+      },
+    });
+  },
+
+  async findByClientId(clientId: string) {
+    return prisma.mealPlan.findMany({
+      where: { clientId },
+      include: {
+        client: true,
+        nutritionist: true,
+        weeklyMealPlans: { include: { dailyPlans: { include: { meals: true } } } },
+        comments: true,
+      },
+    });
+  },
+
+  async count(query: any) {
+    return prisma.mealPlan.count({ where: query });
+  },
+
+  async getFiltered(nutritionistId: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const mealPlans = await prisma.mealPlan.findMany({
+      where: {nutritionistId},
+      include: {
+        client: true,
+        nutritionist: true,
+        weeklyMealPlans: { include: { dailyPlans: { include: { meals: true } } } },
+        comments: true,
+      },
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    });
+
+    const total = await prisma.mealPlan.count({  where: {nutritionistId: nutritionistId,}});
 
     return {
       mealPlans,
@@ -41,10 +83,16 @@ async getFiltered(query: any, page = 1, limit = 10) {
     };
   },
 
-async update(mealPlanId: string, updates: any) {
-    return await MealPlan.findByIdAndUpdate(mealPlanId, updates, { new: true });
+  async update(mealPlanId: string, updates: any) {
+    return prisma.mealPlan.update({
+      where: { id: mealPlanId },
+      data: updates,
+    });
   },
-async delete( mealPlanId: string){
-    return await MealPlan.findByIdAndDelete(mealPlanId)
-}
-}
+
+  async delete(mealPlanId: string) {
+    return prisma.mealPlan.delete({
+      where: { id: mealPlanId },
+    });
+  },
+};
