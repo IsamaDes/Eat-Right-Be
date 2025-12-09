@@ -8,19 +8,26 @@ export const AdminRepository = {
       data: {userId},  include: {
       user: true, 
     },
-});
+  });
     return AdminUser;
   },
 
    async getAdminProfile(userId: string){
-    return prisma.adminProfile.findUnique({
-         where: { userId },
+    const user = await prisma.user.findUnique({
+         where: { id: userId },
          include: {
-           user: true,  
+           adminProfile: true,  
         },
     })
+     if (!user) return null;
+     return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profile: user.adminProfile,
+  };
   },
-
 
   async updateAdminProfile(userId: string, updates: Partial<UpdateAdminProfileInput>) {
     return prisma.adminProfile.update({

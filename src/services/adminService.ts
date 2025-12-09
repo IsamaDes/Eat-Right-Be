@@ -1,6 +1,8 @@
 import { prisma } from "../lib/prisma";
 import { NotFoundError, BadRequestError } from "../errors";
 import { UserRepository } from "../repositories/userRepository";
+import { AdminRepository } from "../repositories/adminRepository";
+
 
 export const getAdminDashboardService = async() => {
 
@@ -32,6 +34,12 @@ export const getUserByIdService = async(id: string) => {
   const existingUser = await UserRepository.findById(id);
  return existingUser
 }
+
+export const getAdminProfileService = async(id: string) => {
+  const profile = await AdminRepository.getAdminProfile(id);
+  return profile;
+};
+
 
 
 export const assignNutritionistToClientService = async (

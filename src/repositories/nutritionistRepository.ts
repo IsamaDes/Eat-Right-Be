@@ -2,6 +2,7 @@
 import { prisma } from "../lib/prisma";
 import { UpdateNutritionistProfileInput } from "../utils/validators/UserValidator";
 
+
 export const NutritionistRepository = {
     async createNutritionistUser(userId: string){
      return prisma.nutritionistProfile.create({data: {userId}, 

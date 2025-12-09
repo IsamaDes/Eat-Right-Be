@@ -5,6 +5,11 @@ import { NutritionistRepository } from "../../repositories/nutritionistRepositor
 import { verifyNutritionistAccess } from "./nutritionAccess.service";
 
 
+export type UpdateNutritionistProfileInput = {
+  certification?:  String;
+  experienceYears?: Number;
+};
+
 export const getNutritionistProfileService = async(nutritionistId: string) => {
   const nutritionist = await NutritionistRepository.getNutritionistProfile(nutritionistId);
   return nutritionist;
@@ -133,5 +138,6 @@ export const deleteMealPlanService = async(userId: string, mealPlanId: string) =
     if(!mealPlan) throw new Error("Meal plan not found");
     return await mealPlanRepository.delete(mealPlanId)
 }
+
 
 

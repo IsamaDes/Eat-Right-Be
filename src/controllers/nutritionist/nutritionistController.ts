@@ -3,11 +3,12 @@ import { createMealPlanService,getMealPlansService, updateMealPlanService, getMe
 import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 import { commentOnMealPlanService } from "../../services/nutrition/NutrionistService";
-import { BadRequestError, NotFoundError } from "../../errors";
+import { BadRequestError, NotFoundError, UnauthorizedError } from "../../errors";
 import getNutritionistDashboardService from "../../services/nutrition/NutritionistDashboardService";
+import UpdateNutritionistProfileInpu
 
 
-export const getNutritionistDashboard = async(req: AuthenticatedRequest, res: Response) => {
+    export const getNutritionistDashboard = async(req: AuthenticatedRequest, res: Response) => {
     try{
 
       const nutritionistId = req.user!._id
@@ -127,3 +128,49 @@ export const commentOnProject = async (req: AuthenticatedRequest, res: Response,
     next(err)
   }
 }
+
+
+// controllers/nutritionist.controller.ts
+export const UpdateNutritionistProfile = async(req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) throw new UnauthorizedError("Invalid user Id");
+
+    const { certification, experienceYears } = req.body;
+
+    // Validation
+    if (experienceYears !== undefined && (typeof experienceYears !== 'number' || experienceYears < 0)) {
+      return res.status(400).json({ 
+        message: "Experience years must be a positive number" 
+      });
+    }
+
+    if (certification !== undefined && typeof certification !== 'string') {
+      return res.status(400).json({ 
+        message: "Certification must be a string" 
+      });
+    }
+
+    const updates: Partial<UpdateNutritionistProfileInput> = {
+      ...(certification !== undefined && { certification }),
+      ...(experienceYears !== undefined && { experienceYears })
+    };
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ 
+        message: "No valid fields to update" 
+      });
+    }
+
+    const updatedProfile = await updateNutritionistProfileService(userId, updates);
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      data: updatedProfile
+    });
+
+  } catch (error: any) {
+    console.error("Update nutritionist profile error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

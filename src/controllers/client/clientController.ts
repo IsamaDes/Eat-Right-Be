@@ -1,5 +1,4 @@
 import { Response } from "express";
-import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 import { NotFoundError, UnauthorizedError } from "../../errors";
 import { ClientRepository } from "../../repositories/clientRepository";
