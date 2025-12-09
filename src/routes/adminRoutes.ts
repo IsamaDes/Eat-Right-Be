@@ -10,13 +10,13 @@ router.use(protect)
 // Only admins can access dashboard
 router.get(
   "/dashboard",                 // User must be logged in
-  authorizeRoles("admin"),  // User must be admin
+  authorizeRoles("ADMIN"),  // User must be admin
   getAdminDashboard
 );
 
 
-router.get("/users/:id", authorizeRoles("admin", "nutritionist"), getUserById);
-router.patch("/assign-nutritionist", authorizeRoles("admin"), assignNutritionistToClient)
+router.get("/users/:id", authorizeRoles("ADMIN", "NUTRITIONIST"), getUserById);
+router.patch("/assign-nutritionist", authorizeRoles("ADMIN"), assignNutritionistToClient)
 
 
 export default router;

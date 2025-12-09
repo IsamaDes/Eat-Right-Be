@@ -1,10 +1,29 @@
 import type { Response, NextFunction } from "express";
-import { createMealPlanService,getMealPlansService, updateMealPlanService, getMealPlanByIdService } from "../../services/nutrition"
+import { createMealPlanService,getMealPlansService, updateMealPlanService, getMealPlanByIdService, getNutritionistClients } from "../../services/nutrition/NutrionistService"
 import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
-import { commentOnMealPlanService } from "../../services/nutrition/commentMealPlan.service";
+import { commentOnMealPlanService } from "../../services/nutrition/NutrionistService";
 import { BadRequestError, NotFoundError } from "../../errors";
-import { getNutritionistClients } from "../../services/nutrition";
+import getNutritionistDashboardService from "../../services/nutrition/NutritionistDashboardService";
+
+
+export const getNutritionistDashboard = async(req: AuthenticatedRequest, res: Response) => {
+    try{
+
+      const nutritionistId = req.user!._id
+      const dashboard = await getNutritionistDashboardService(nutritionistId);
+       return res.status(200).json({
+      success: true,
+      data: dashboard,
+    });
+    }catch(error: any){
+      console.error("Nutritionist Dashboard Error:", error);
+      return res.status(500).json({
+      success: false,
+      message: "Failed to load dashboard",
+    });
+    }
+};
 
  //Returns the profile of the logged-in nutritionist
 export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {

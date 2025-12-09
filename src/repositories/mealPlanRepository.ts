@@ -56,11 +56,11 @@ export const mealPlanRepository = {
     return prisma.mealPlan.count({ where: query });
   },
 
-  async getFiltered(query: any, page = 1, limit = 10) {
+  async getFiltered(nutritionistId: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
     const mealPlans = await prisma.mealPlan.findMany({
-      where: query,
+      where: {nutritionistId},
       include: {
         client: true,
         nutritionist: true,
@@ -72,7 +72,7 @@ export const mealPlanRepository = {
       orderBy: { createdAt: "desc" },
     });
 
-    const total = await prisma.mealPlan.count({ where: query });
+    const total = await prisma.mealPlan.count({  where: {nutritionistId: nutritionistId,}});
 
     return {
       mealPlans,

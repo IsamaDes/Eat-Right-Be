@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 import { 
-  createUserService, 
   getAdminDashboardService, 
   getUserByIdService, 
   assignNutritionistToClientService 
@@ -36,23 +35,6 @@ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// Create a new user
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    const { name, email, password, role } = req.body;
-    const user = await createUserService(name, email, password, role );
-    res.status(201).json({
-      message: "User created successfully",
-      user: {
-        id: user.id,
-        email: user.email,
-      },
-    });
-  } catch (error: any) {
-    console.error("Registration error:", error.message);
-    res.status(400).json({ message: error.message });
-  }
-};
 
 // Assign a nutritionist to a client
 export const assignNutritionistToClient = async (req: AuthenticatedRequest, res: Response) => {

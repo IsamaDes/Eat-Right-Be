@@ -66,7 +66,7 @@ app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/client", clientRoutes);
 app.use("/nutritionist", nutritionistRoutes);
-app.use("/user", userRoutes);
+app.use("/users", userRoutes);
 app.use("/chats", chatRoutes)
 
 app.use((req, res, next) => {

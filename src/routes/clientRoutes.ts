@@ -9,7 +9,7 @@ import { getClientProfile } from "../controllers/client/clientController";
 router.get(
   "/profile",
   protect,                
-  authorizeRoles("client"), 
+  authorizeRoles("CLIENT"), 
   getClientProfile
 );
 

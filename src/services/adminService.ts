@@ -5,15 +5,15 @@ import { UserRepository } from "../repositories/userRepository";
 export const getAdminDashboardService = async() => {
 
     const [clientCount, nutritionistCount, adminCount] = await Promise.all([
-    UserRepository.countByRole("client"),
-    UserRepository.countByRole("nutritionist"),
-    UserRepository.countByRole("admin"),
+    UserRepository.countByRole("CLIENT"),
+    UserRepository.countByRole("NUTRITIONIST"),
+    UserRepository.countByRole("ADMIN"),
   ]);
 
-  const latestClients = await UserRepository.findLatestByRole("client", 5);
-  const clients = await UserRepository.findAllUsersByRole("client");
-  const nutritionist = await UserRepository.findAllUsersByRole("nutritionist");
-  const admin = await UserRepository.findAllUsersByRole("admin");
+
+  const clients = await UserRepository.findAllUsersByRole("CLIENT");
+  const nutritionist = await UserRepository.findAllUsersByRole("NUTRITIONIST");
+  const admin = await UserRepository.findAllUsersByRole("ADMIN");
 
    return {
     total: {
@@ -21,31 +21,17 @@ export const getAdminDashboardService = async() => {
       nutritionists: nutritionistCount,
       admins: adminCount,
     },
-    latestClients,
+  
     clients,
     nutritionist,
     admin
   };
 };
 
-export const createUserService = async(name: string, email: string, password: string, role: string) => {
-   if(!name || !email || !role){
-    throw new Error("Missing required fields");
-   };
-   const existingUser = await UserRepository.findByEmail(email);
-    if(existingUser) throw new Error("User Already Exist");
-    const user = await UserRepository.create({name, email, password, role});
-    return {id: user.id, email: user.email};
-}
-
 export const getUserByIdService = async(id: string) => {
   const existingUser = await UserRepository.findById(id);
  return existingUser
 }
-
-
-
-
 
 
 export const assignNutritionistToClientService = async (
@@ -71,7 +57,7 @@ export const assignNutritionistToClientService = async (
     throw new NotFoundError(`Nutritionist with ID ${nutritionistId} not found`);
   }
 
-  if (nutritionistProfile.user.role !== "nutritionist") {
+  if (nutritionistProfile.user.role !== "NUTRITIONIST") {
     throw new BadRequestError("The selected user is not a nutritionist");
   }
 

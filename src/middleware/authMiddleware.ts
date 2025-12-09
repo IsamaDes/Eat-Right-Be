@@ -31,7 +31,7 @@ const protect = async (req: AuthenticatedRequest, res: Response, next: NextFunct
       // Fetch user from DB (without password)
       const user = await UserRepository.findById(decoded.id)
     
-      req.user = {_id: user._id.toString(), email: user.email, role: user.role}; // Attach user to request
+      req.user = {_id: user.id.toString(), email: user.email, role: user.role}; // Attach user to request
       next();
     } catch (err) {
       console.error("JWT verification failed:", err);

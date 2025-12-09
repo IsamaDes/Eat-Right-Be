@@ -6,12 +6,19 @@ export const ClientRepository = {
   async createClientProfile(userId: string) {
     return prisma.clientProfile.create({
       data: { userId },
+      include: {
+        user: true, 
+    },
     });
+    
   },
 
   async getClientProfile(userId: string){
     return prisma.clientProfile.findUnique({
          where: { userId },
+         include: {
+           user: true,  
+        },
     })
   },
 

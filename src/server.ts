@@ -2,7 +2,6 @@ import app from "./app";
 import {connectDB} from "./config/db";
 import http from "http";
 import { initSocket } from "./sockets";
-import { getIO } from "./sockets";
 
 const server = http.createServer(app);
 

@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
-import { UnauthorizedError } from "../../errors";
+import { NotFoundError, UnauthorizedError } from "../../errors";
 import { ClientRepository } from "../../repositories/clientRepository";
 
 
@@ -11,9 +11,24 @@ import { ClientRepository } from "../../repositories/clientRepository";
     const userId = req.user?._id;
     if(!userId) throw new UnauthorizedError("Invalid user Id")
     const client = await ClientRepository.getClientProfile(userId)
+   if (!client) {
+    throw new NotFoundError("Client profile not found");
+  }
     res.status(200).json({
       success: true,
-      data: client,
+      data: {
+      id: client.user.id,
+      name: client.user.name,
+      email: client.user.email,
+      role: client.user.role,
+      
+      // Client-specific data (from Client table)
+      clientId: client.id,
+      healthGoal: client.healthGoal,
+      age: client.age,
+      subscription: client.subscription,
+      assignedNutritionistId: client.assignedNutritionistId,
+      },
     });
   } catch (error: any) {
     console.error("Error fetching client profile:", error);

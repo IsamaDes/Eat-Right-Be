@@ -1,4 +1,3 @@
-import { getCurrentUser } from "../controllers/user/userController";
 import { UserRepository } from "../repositories/userRepository";
 
 export const getUserService = {

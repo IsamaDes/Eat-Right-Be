@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 import { getUserService } from "../../services/userService";
 
+
 export const getCurrentUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) {
@@ -12,7 +13,7 @@ export const getCurrentUser = async (req: AuthenticatedRequest, res: Response) =
        if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+
     return res.status(200).json({
       status: "success",
       user,
