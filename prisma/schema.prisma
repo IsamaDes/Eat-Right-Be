@@ -79,7 +79,7 @@ model NutritionistProfile {
   user                User          @relation(fields: [userId], references: [id])
   certification   String?
   experienceYears Int?
-  
+
   appointmentsCreated Appointment[] @relation("CreatedAppointments")
   createdMealPlans MealPlan[]      @relation("NutritionistMealPlans")
   clients          ClientProfile[] @relation("NutritionistAssignments")

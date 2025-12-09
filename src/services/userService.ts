@@ -40,7 +40,6 @@ export const updateUserProfile = async (
 ) => {
   let parsedInput: any;
 
-  // Parse and validate based on role
   switch (role) {
     case "CLIENT":
       parsedInput = UpdateClientProfileSchema.parse(updates);

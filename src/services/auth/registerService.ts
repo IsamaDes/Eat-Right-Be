@@ -6,6 +6,7 @@ import { ZodError } from "zod";
 import { ClientRepository } from "../../repositories/clientRepository";
 import { NutritionistRepository } from "../../repositories/nutritionistRepository";
 import { AdminRepository } from "../../repositories/adminRepository";
+import { prisma } from "../../lib/prisma";
 
 
 export type UserRole = "CLIENT" | "NUTRITIONIST" | "ADMIN";
@@ -24,11 +25,18 @@ const registerUser = async (name: string, email: string, password: string, role:
 
   if (existing) throw new BadRequestError("User already exists");
 
-  const user = await UserRepository.createBaseUser(parsedInput);
 
-  console.log("Registration successful for:", user.email, user.id);
+   const user = await prisma.$transaction(async (tx) => {
+  const createdUser = await tx.user.create({
+        data: {
+          name: parsedInput.name,
+          email: parsedInput.email,
+          password: parsedInput.password, 
+          role: parsedInput.role,
+        },
+      });
 
-    switch (role) {
+    switch (parsedInput.role) {
     case "CLIENT":
       await ClientRepository.createClientProfile(user.id);
       break;
@@ -41,6 +49,11 @@ const registerUser = async (name: string, email: string, password: string, role:
       await AdminRepository.createAdminProfile(user.id);
       break;
   }
+
+   return createdUser;
+});
+
+console.log("Registration successful for:", user.email, user.id);
 
   return {
   success: true,

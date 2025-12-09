@@ -21,8 +21,7 @@ export const LoginSchema = z.object({
 //client
 export const UpdateClientProfileSchema = z.object({
   healthGoal: z.string().optional(), 
-  age: z.number().int().optional(),
-  fitnessGoal: z.string().optional(), 
+  age: z.number().int().optional(), 
 });
 
 //nutritionist
