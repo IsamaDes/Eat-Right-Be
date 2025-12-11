@@ -7,6 +7,170 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model BlacklistedToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model User {
+  id                         String               @id @default(cuid())
+  name                       String?
+  email                      String               @unique
+  password                   String
+  role                       UserRole
+  createdAt                  DateTime             @default(now())
+  updatedAt                  DateTime             @updatedAt
+  lockUntil                  DateTime?
+  loginAttempts              Int                  @default(0)
+  adminProfile               AdminProfile?
+  appointmentsAsClient       Appointment[]        @relation("ClientAppointments")
+  appointmentsAsNutritionist Appointment[]        @relation("NutritionistAppointments")
+  chatsReceived              ChatMessage[]        @relation("ReceivedMessages")
+  chatsSent                  ChatMessage[]        @relation("SentMessages")
+  clientProfile              ClientProfile?
+  mealPlanComments           MealPlanComment[]
+  nutritionistProfile        NutritionistProfile?
+}
+
+model HealthHistory {
+  id            String        @id @default(cuid())
+  clientId      String
+  value         String
+  clientProfile ClientProfile @relation("HealthHistory", fields: [clientId], references: [id])
+}
+
+model NutritionistProfile {
+  id                  String          @id @default(cuid())
+  userId              String          @unique
+  certification       String?
+  experienceYears     Int?
+  appointmentsCreated Appointment[]   @relation("CreatedAppointments")
+  clients             ClientProfile[] @relation("NutritionistAssignments")
+  createdMealPlans    MealPlan[]      @relation("NutritionistMealPlans")
+  user                User            @relation(fields: [userId], references: [id])
+}
+
+model ClientProfile {
+  id                     String               @id @default(cuid())
+  userId                 String               @unique
+  assignedNutritionistId String?
+  healthGoal             String?
+  age                    Int?
+  subscription           String?
+  assignedNutritionist   NutritionistProfile? @relation("NutritionistAssignments", fields: [assignedNutritionistId], references: [id])
+  user                   User                 @relation(fields: [userId], references: [id])
+  healthHistory          HealthHistory[]      @relation("HealthHistory")
+  mealPlans              MealPlan[]           @relation("ClientMealPlans")
+}
+
+model AdminProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  roleDescription String?
+  permissions     String[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+model Appointment {
+  id             String               @id @default(cuid())
+  date           DateTime?
+  nutritionistId String
+  clientId       String
+  createdById    String?
+  notes          String?
+  status         AppointmentStatus    @default(pending)
+  client         User                 @relation("ClientAppointments", fields: [clientId], references: [id])
+  createdBy      NutritionistProfile? @relation("CreatedAppointments", fields: [createdById], references: [id])
+  nutritionist   User                 @relation("NutritionistAppointments", fields: [nutritionistId], references: [id])
+}
+
+model ChatMessage {
+  id          String      @id @default(cuid())
+  senderId    String
+  receiverId  String
+  message     String
+  messageType MessageType @default(text)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  receiver    User        @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender      User        @relation("SentMessages", fields: [senderId], references: [id])
+}
+
+model MealPlan {
+  id                     String              @id @default(cuid())
+  clientId               String
+  nutritionistId         String
+  dateRangeStart         DateTime
+  dateRangeEnd           DateTime
+  numberOfWeeks          Int
+  healthGoal             String
+  nutritionalRequirement String
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  client                 ClientProfile       @relation("ClientMealPlans", fields: [clientId], references: [id])
+  nutritionist           NutritionistProfile @relation("NutritionistMealPlans", fields: [nutritionistId], references: [id])
+  comments               MealPlanComment[]
+  weeklyMealPlans        WeeklyMealPlan[]
+}
+
+model WeeklyMealPlan {
+  id         String          @id @default(cuid())
+  mealPlanId String
+  weekNumber Int
+  dailyPlans DailyMealPlan[]
+  mealPlan   MealPlan        @relation(fields: [mealPlanId], references: [id])
+}
+
+model DailyMealPlan {
+  id           String         @id @default(cuid())
+  weeklyPlanId String
+  dayOfWeek    String
+  weeklyPlan   WeeklyMealPlan @relation(fields: [weeklyPlanId], references: [id])
+  meals        MealPlanMeal[]
+}
+
+model MealPlanMeal {
+  id                 String        @id @default(cuid())
+  dailyMealPlanId    String
+  timeOfDay          String
+  typeOfMeal         MealType
+  food               String
+  nutritionalContent String
+  dailyMealPlan      DailyMealPlan @relation(fields: [dailyMealPlanId], references: [id])
+}
+
+model MealPlanComment {
+  id         String   @id @default(cuid())
+  mealPlanId String
+  userId     String
+  text       String
+  createdAt  DateTime @default(now())
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Subscription {
+  id                String   @id @default(cuid())
+  subscriberId      String
+  planName          String
+  amount            Int
+  billingInterval   String
+  billingCycleCount Int
+  currency          String   @default("NGN")
+  status            String   @default("pending")
+  reference         String?  @unique
+  metadata          Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
 enum UserRole {
   ADMIN
   CLIENT
@@ -30,171 +194,4 @@ enum MealType {
   breakfast
   lunch
   dinner
-}
-
-model BlacklistedToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  @@index([token])
-  @@index([expiresAt])
-}
-
-model User {
-  id        String   @id @default(cuid())
-  name      String?
-  email     String   @unique
-  password  String
-  role      UserRole
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  loginAttempts Int     @default(0)
-  lockUntil     DateTime?
-
-  nutritionistProfile NutritionistProfile?
-  clientProfile       ClientProfile?
-  adminProfile        AdminProfile?
-
-  appointmentsAsNutritionist Appointment[] @relation("NutritionistAppointments")
-  appointmentsAsClient       Appointment[] @relation("ClientAppointments")
-  chatsSent                  ChatMessage[] @relation("SentMessages")
-  chatsReceived              ChatMessage[] @relation("ReceivedMessages")
-
-  mealPlanComments MealPlanComment[]
-}
-
-model HealthHistory {
-  id       String @id @default(cuid())
-  clientId String
-  value    String
-
-  clientProfile ClientProfile @relation("HealthHistory", fields: [clientId], references: [id])
-}
-
-model NutritionistProfile {
-  id                  String        @id @default(cuid())
-  userId              String        @unique
-  user                User          @relation(fields: [userId], references: [id])
-  certification   String?
-  experienceYears Int?
-
-  appointmentsCreated Appointment[] @relation("CreatedAppointments")
-  createdMealPlans MealPlan[]      @relation("NutritionistMealPlans")
-  clients          ClientProfile[] @relation("NutritionistAssignments")
-}
-
-model ClientProfile {
-  id     String @id @default(cuid())
-  userId String @unique
-  healthGoal  String?
-  age Int?
-  subscription String?
-  user   User   @relation(fields: [userId], references: [id])
-
-  assignedNutritionistId String?
-  assignedNutritionist   NutritionistProfile?  @relation("NutritionistAssignments", fields: [assignedNutritionistId], references: [id])
-  mealPlans              MealPlan[]            @relation("ClientMealPlans")
-  healthHistory          HealthHistory[]       @relation("HealthHistory")
-}
-
-model AdminProfile {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-
-  roleDescription String?
-  permissions     String[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-}
-
-model Appointment {
-  id             String            @id @default(cuid())
-  date           DateTime?
-  nutritionistId String
-  clientId       String
-  createdById    String?
-  notes          String?
-  status         AppointmentStatus @default(pending)
-
-  nutritionist User                 @relation("NutritionistAppointments", fields: [nutritionistId], references: [id])
-  client       User                 @relation("ClientAppointments", fields: [clientId], references: [id])
-  createdBy    NutritionistProfile? @relation("CreatedAppointments", fields: [createdById], references: [id])
-}
-
-// CHAT MODEL
-model ChatMessage {
-  id          String      @id @default(cuid())
-  senderId    String
-  receiverId  String
-  message     String
-  messageType MessageType @default(text)
-
-  sender   User @relation("SentMessages", fields: [senderId], references: [id])
-  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model MealPlan {
-  id                     String   @id @default(cuid())
-  clientId               String
-  nutritionistId         String
-  dateRangeStart         DateTime
-  dateRangeEnd           DateTime
-  numberOfWeeks          Int
-  healthGoal             String
-  nutritionalRequirement String
-
-  client          ClientProfile       @relation("ClientMealPlans", fields: [clientId], references: [id])
-  nutritionist    NutritionistProfile @relation("NutritionistMealPlans", fields: [nutritionistId], references: [id])
-  weeklyMealPlans WeeklyMealPlan[]
-  comments        MealPlanComment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model WeeklyMealPlan {
-  id         String @id @default(cuid())
-  mealPlanId String
-  weekNumber Int
-
-  mealPlan   MealPlan        @relation(fields: [mealPlanId], references: [id])
-  dailyPlans DailyMealPlan[]
-}
-
-model DailyMealPlan {
-  id           String @id @default(cuid())
-  weeklyPlanId String
-  dayOfWeek    String
-
-  weeklyPlan WeeklyMealPlan @relation(fields: [weeklyPlanId], references: [id])
-  meals      MealPlanMeal[]
-}
-
-model MealPlanMeal {
-  id                 String   @id @default(cuid())
-  dailyMealPlanId    String
-  timeOfDay          String
-  typeOfMeal         MealType
-  food               String
-  nutritionalContent String
-
-  dailyMealPlan DailyMealPlan @relation(fields: [dailyMealPlanId], references: [id])
-}
-
-model MealPlanComment {
-  id         String @id @default(cuid())
-  mealPlanId String
-  userId     String
-  text       String
-
-  mealPlan MealPlan @relation(fields: [mealPlanId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
 }

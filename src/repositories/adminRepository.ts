@@ -3,8 +3,8 @@ import { prisma } from "../lib/prisma";
 import { UpdateAdminProfileInput } from "../utils/validators/UserValidator";
 
 export const AdminRepository = {
-  async createAdminProfile(userId: string) {
-    const AdminUser = await prisma.adminProfile.create({
+  async createAdminProfile(userId: string, tx: any) {
+    const AdminUser = await tx.adminProfile.create({
       data: {userId},  include: {
       user: true, 
     },
@@ -33,6 +33,48 @@ export const AdminRepository = {
     return prisma.adminProfile.update({
       where: { userId },
       data: updates,
+    });
+  },
+
+async assignClientNutritionist(clientId: string, nutritionistId: string){
+  return prisma.clientProfile.update({
+    where: {userId: clientId},
+    data: {assignedNutritionistId: nutritionistId},
+    include: {
+       user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
+        },
+      assignedNutritionist: { 
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              }
+            }
+          }
+        }
+    }
+  })
+},
+
+
+ async getClientWithNutritionist(clientId: string) {
+    return prisma.clientProfile.findUnique({
+      where: { userId: clientId },
+      include: {
+        user: true,
+        assignedNutritionist: { 
+          include: {
+            user: true
+          }
+        }
+      }
     });
   }
 };

@@ -64,9 +64,9 @@ export const UserRepository = {
         name: true,
         email: true,
         createdAt: true,
-        clientProfile: true,
-        nutritionistProfile: true,
-        adminProfile: true,
+        clientProfile: role === "CLIENT" ? { select: { id: true } } : undefined,
+        nutritionistProfile: role === "NUTRITIONIST" ? { select: { id: true } } : undefined,
+        adminProfile: role === "ADMIN" ? { select: { id: true } } : undefined,
       },
       orderBy: { createdAt: "desc" },
     });

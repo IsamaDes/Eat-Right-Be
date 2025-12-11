@@ -27,6 +27,7 @@ import { ClientRepository } from "../../repositories/clientRepository";
       age: client.age,
       subscription: client.subscription,
       assignedNutritionistId: client.assignedNutritionistId,
+      assignedNutritionist: client.assignedNutritionist
       },
     });
   } catch (error: any) {
@@ -35,3 +36,10 @@ import { ClientRepository } from "../../repositories/clientRepository";
   }
 };
 
+export const getClientMealPlans = async (req: AuthenticatedRequest, res: Response) => {
+
+}
+
+export const getClientMealSchedule = async (req: AuthenticatedRequest, res: Response) => {
+
+}

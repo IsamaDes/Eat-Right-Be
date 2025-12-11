@@ -1,16 +1,26 @@
 import express from "express";
 const router = express.Router();
 import protect from "../middleware/authMiddleware";
-import authorizeRoles from "../middleware/roleMiddleware";
-import { getClientProfile } from "../controllers/client/clientController";
+import { getClientMealPlans, getClientMealSchedule, getClientProfile } from "../controllers/client/clientController";
 
-
-// Clients can access their profile
 router.get(
   "/profile",
   protect,                
-  authorizeRoles("CLIENT"), 
   getClientProfile
 );
+
+router.get(
+  "/meal-plans/:id",
+  protect,
+  getClientMealPlans
+  
+)
+
+
+router.get(
+  "/meal-schedule",
+  protect,
+  getClientMealSchedule 
+)
 
 export default router;

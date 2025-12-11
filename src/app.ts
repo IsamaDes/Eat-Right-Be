@@ -10,6 +10,7 @@ import nutritionistRoutes from "./routes/nutritionistRoutes"
 import adminRoutes from "./routes/adminRoutes";
 import userRoutes from "./routes/userRoutes"
 import chatRoutes from "./routes/chatRoutes"
+import subscriptionRoutes from "./routes/subscriptionRoutes"
 
 import { NotFoundError } from "./errors";
 import {
@@ -68,6 +69,7 @@ app.use("/client", clientRoutes);
 app.use("/nutritionist", nutritionistRoutes);
 app.use("/users", userRoutes);
 app.use("/chats", chatRoutes)
+app.use("/subscriptions", subscriptionRoutes);
 
 app.use((req, res, next) => {
   next(new NotFoundError(`Route ${req.originalUrl} not found`));

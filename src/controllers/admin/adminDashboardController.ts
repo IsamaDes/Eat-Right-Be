@@ -5,6 +5,7 @@ import {
   getUserByIdService, 
   assignNutritionistToClientService 
 } from "../../services/adminService";
+import { BadRequestError, UnauthorizedError } from "../../errors";
 
 // Returns basic stats for the admin dashboard
 export const getAdminDashboard = async (req: AuthenticatedRequest, res: Response) => {
@@ -36,21 +37,26 @@ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 
-// Assign a nutritionist to a client
 export const assignNutritionistToClient = async (req: AuthenticatedRequest, res: Response) => {
-  const { clientId, nutritionistId } = req.body;
+  const adminId = req.user?._id;
+  const { nutritionistId, clientId } = req.body;
 
-  if (!clientId || !nutritionistId) {
-    return res.status(400).json({ success: false, message: "Both clientId and nutritionistId are required." });
-  }
+ 
+    if (!adminId) {
+      throw new UnauthorizedError("Invalid user ID");
+    }
+
+    if (!nutritionistId || !clientId) {
+      throw new BadRequestError("Nutritionist ID and clientUserId is required");
+    }
 
   try {
-    const result = await assignNutritionistToClientService(clientId, nutritionistId, req.user?._id);
+    const updatedClient = await assignNutritionistToClientService(clientId, nutritionistId);
 
     res.status(200).json({
       success: true,
-      message: result.message,
-      client: result.client,
+      message: "Nutritionist assigned successfully",
+      data: updatedClient,
     });
   } catch (err: any) {
     console.error("[assignNutritionistToClient] Error:", {

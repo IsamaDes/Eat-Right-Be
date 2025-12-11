@@ -7,6 +7,7 @@ import { ClientRepository } from "../../repositories/clientRepository";
 import { NutritionistRepository } from "../../repositories/nutritionistRepository";
 import { AdminRepository } from "../../repositories/adminRepository";
 import { prisma } from "../../lib/prisma";
+import bcrypt from "bcrypt"
 
 
 export type UserRole = "CLIENT" | "NUTRITIONIST" | "ADMIN";
@@ -25,28 +26,28 @@ const registerUser = async (name: string, email: string, password: string, role:
 
   if (existing) throw new BadRequestError("User already exists");
 
-
+const hashedPassword = await bcrypt.hash(parsedInput.password, 10);
    const user = await prisma.$transaction(async (tx) => {
   const createdUser = await tx.user.create({
         data: {
           name: parsedInput.name,
           email: parsedInput.email,
-          password: parsedInput.password, 
+          password: hashedPassword, 
           role: parsedInput.role,
         },
       });
 
     switch (parsedInput.role) {
     case "CLIENT":
-      await ClientRepository.createClientProfile(user.id);
+      await ClientRepository.createClientProfile(createdUser.id, tx);
       break;
 
     case "NUTRITIONIST":
-      await NutritionistRepository.createNutritionistUser(user.id);
+      await NutritionistRepository.createNutritionistUser(createdUser.id, tx);
       break;
 
     case "ADMIN":
-      await AdminRepository.createAdminProfile(user.id);
+      await AdminRepository.createAdminProfile(createdUser.id, tx);
       break;
   }
 
