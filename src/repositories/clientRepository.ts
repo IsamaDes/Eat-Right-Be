@@ -3,8 +3,8 @@ import { prisma } from "../lib/prisma";
 import { UpdateClientProfileInput } from "../utils/validators/UserValidator";
 
 export const ClientRepository = {
-  async createClientProfile(userId: string) {
-    return prisma.clientProfile.create({
+  async createClientProfile(userId: string, tx: any) {
+    return tx.clientProfile.create({
       data: { userId },
       include: {
         user: true, 
@@ -13,14 +13,26 @@ export const ClientRepository = {
     
   },
 
-  async getClientProfile(userId: string){
-    return prisma.clientProfile.findUnique({
-         where: { userId },
-         include: {
-           user: true,  
-        },
-    })
-  },
+ async getClientProfile(userId: string) {
+  return prisma.clientProfile.findUnique({
+    where: { userId },
+    include: {
+      assignedNutritionist: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        }
+      },
+      mealPlans: true,
+      user: true
+    }
+  });
+},
 
   async updateClientProfile(userId: string, updates: Partial<UpdateClientProfileInput>) {
     return prisma.clientProfile.update({
@@ -35,5 +47,9 @@ export const ClientRepository = {
       where: { assignedNutritionistId: nutritionistId },
       include: { user: true },
     });
-  }
+  },
+
+
 };
+
+

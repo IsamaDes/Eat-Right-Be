@@ -4,11 +4,11 @@ import { UpdateNutritionistProfileInput } from "../utils/validators/UserValidato
 
 
 export const NutritionistRepository = {
-    async createNutritionistUser(userId: string){
-     return prisma.nutritionistProfile.create({data: {userId}, 
-     include: {
-      user: true, 
-    },})
+    async createNutritionistUser(userId: string, tx: any){
+  return tx.nutritionistProfile.create({
+      data: { userId },
+      include: { user: true },
+    });
     },
 
     async findClientsByNutritionistId(nutritionistId: string){
