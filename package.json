@@ -9,6 +9,7 @@
     "test": "NODE_ENV=test jest",
     "test:integration": "NODE_ENV=test jest test/integration",
     "build": "tsc",
+    "prisma:generate": "prisma generate",
     "start": "node build/server.js"
   },
   "dependencies": {
