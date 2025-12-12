@@ -24,7 +24,7 @@ router.get(
 
 
 router.post(
-  "/create",
+  "/create-mealplan",
   authorizeRoles("ADMIN", "NUTRITIONIST"),
   createMealPlan
 );

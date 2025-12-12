@@ -25,7 +25,17 @@ export const NutritionistRepository = {
    const user = await prisma.user.findUnique({
          where: { id: userId },
          include: {
-          nutritionistProfile: true,
+          nutritionistProfile: {
+             include: {
+             clients: {
+
+               include: {
+              user: true, 
+            },
+             }
+        },
+        },
+
         },
     })
     if (!user) return null;
