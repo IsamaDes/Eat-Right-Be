@@ -108,7 +108,7 @@ export const initializeSubscriptionPaymentService = async (
 export const verifyPaymentService = async (req: Request, res: Response) => {
   try {
     const reference = (req.query as { reference?: string }).reference;
-    const FRONTEND_URL = "https://eat-right.vercel.app";
+    const FRONTEND_URL = "https://eat-right-fe.vercel.app";
 
     if (!reference) {
       res.setHeader("ngrok-skip-browser-warning", "true");
@@ -141,7 +141,7 @@ export const verifyPaymentService = async (req: Request, res: Response) => {
     res.setHeader("ngrok-skip-browser-warning", "true");
     return res.redirect(`${FRONTEND_URL}/client/subscribe?failed=true`);
   } catch (error) {
-    const FRONTEND_URL = "https://eat-right.vercel.app";
+    const FRONTEND_URL = "https://eat-right-fe.vercel.app";
 
     res.setHeader("ngrok-skip-browser-warning", "true");
     return res.redirect(`${FRONTEND_URL}/client/subscribe?failed=true`);

@@ -81,7 +81,7 @@ app.use(
 
 app.use(
   cors({
-    origin: ["https://eatright-theta.vercel.app", "http://localhost:5173"],
+    origin: ["https://eat-right-fe.vercel.app", "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
