@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
-const authMiddleware_js_1 = __importDefault(require("../middleware/authMiddleware.js"));
-const roleMiddleware_js_1 = __importDefault(require("../middleware/roleMiddleware.js"));
-const clientController_js_1 = __importDefault(require("../controllers/client/clientController.js"));
-// Clients can access their profile
-router.get("/profile", authMiddleware_js_1.default, (0, roleMiddleware_js_1.default)("client"), clientController_js_1.default);
+const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware"));
+const clientController_1 = require("../controllers/client/clientController");
+router.get("/profile", authMiddleware_1.default, clientController_1.getClientProfile);
+router.get("/meal-plans/:id", authMiddleware_1.default, clientController_1.getClientMealPlans);
+router.get("/meal-schedule", authMiddleware_1.default, clientController_1.getClientMealSchedule);
 exports.default = router;

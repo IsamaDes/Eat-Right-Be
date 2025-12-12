@@ -1,41 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorHandler = exports.badRequest = exports.invalidCredentials = exports.notFound = void 0;
-/**
- * Middleware for handling 404 Not Found errors
- */
-const notFound = (req, res, next) => {
-    const error = new Error(`Not Found - ${req.originalUrl}`);
-    res.status(404);
-    next(error);
-};
-exports.notFound = notFound;
-/**
- * Middleware for handling invalid credentials (401)
- */
-const invalidCredentials = (req, res, next) => {
-    const error = new Error("Invalid Credentials");
-    res.status(401);
-    next(error);
-};
-exports.invalidCredentials = invalidCredentials;
-/**
- * Middleware for handling bad request (400)
- */
-const badRequest = (req, res, next) => {
-    const error = new Error("Bad Request");
-    res.status(400);
-    next(error);
-};
-exports.badRequest = badRequest;
-/**
- * Global error handler middleware
- */
+exports.errorHandler = void 0;
+const logger_1 = require("../utils/logger");
+const AppError_1 = require("../errors/AppError");
 const errorHandler = (err, req, res, next) => {
-    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-    res.status(statusCode).json({
-        message: err.message || "Something went wrong",
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+    const isOperational = err instanceof AppError_1.AppError;
+    logger_1.logger.error({
+        message: err.message,
+        stack: err.stack,
+        path: req.url,
+        details: err.details ?? null,
+    }, "Error occurred");
+    const status = isOperational ? err.status : 500;
+    res.status(status).json({
+        success: false,
+        errorType: err.constructor?.name || "UnknownError",
+        message: err.message || "Internal Server Error",
     });
 };
 exports.errorHandler = errorHandler;

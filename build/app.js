@@ -8,13 +8,20 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const swagger_js_1 = __importDefault(require("./config/swagger.js"));
-const authRoutes_js_1 = __importDefault(require("./routes/authRoutes.js"));
-const clientRoutes_js_1 = __importDefault(require("./routes/clientRoutes.js"));
-const nutritionistRoutes_js_1 = __importDefault(require("./routes/nutritionistRoutes.js"));
-const adminRoutes_js_1 = __importDefault(require("./routes/adminRoutes.js"));
-const errorMiddleware_js_1 = require("./middleware/errorMiddleware.js");
+const swagger_1 = __importDefault(require("./config/swagger"));
+const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+const clientRoutes_1 = __importDefault(require("./routes/clientRoutes"));
+const nutritionistRoutes_1 = __importDefault(require("./routes/nutritionistRoutes"));
+const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const chatRoutes_1 = __importDefault(require("./routes/chatRoutes"));
+const subscriptionRoutes_1 = __importDefault(require("./routes/subscriptionRoutes"));
+const errors_1 = require("./errors");
+const errorMiddleware_1 = require("./middleware/errorMiddleware");
 const app = (0, express_1.default)();
+if (process.env.NODE_ENV !== "test") {
+    app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
+}
 app.use((req, res, next) => {
     console.log("Origin:", req.headers.origin);
     next();
@@ -42,16 +49,18 @@ app.use((0, cors_1.default)({
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use((0, cookie_parser_1.default)());
-app.use(express_1.default.json());
+app.use(express_1.default.json()); // This is required to parse JSON bodies... was getting wrong input without it.... has to be before routes
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_js_1.default));
 app.get("/", (req, res) => res.send("API is running"));
-app.use("/auth", authRoutes_js_1.default);
-app.use("/admin", adminRoutes_js_1.default);
-app.use("/client", clientRoutes_js_1.default);
-app.use("/nutritionist", nutritionistRoutes_js_1.default);
-app.use(errorMiddleware_js_1.errorHandler);
-app.use(errorMiddleware_js_1.badRequest);
-app.use(errorMiddleware_js_1.invalidCredentials);
-app.use(errorMiddleware_js_1.notFound);
+app.use("/auth", authRoutes_1.default);
+app.use("/admin", adminRoutes_1.default);
+app.use("/client", clientRoutes_1.default);
+app.use("/nutritionist", nutritionistRoutes_1.default);
+app.use("/users", userRoutes_1.default);
+app.use("/chats", chatRoutes_1.default);
+app.use("/subscriptions", subscriptionRoutes_1.default);
+app.use((req, res, next) => {
+    next(new errors_1.NotFoundError(`Route ${req.originalUrl} not found`));
+});
+app.use(errorMiddleware_1.errorHandler);
 exports.default = app;

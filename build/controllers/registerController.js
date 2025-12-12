@@ -88,25 +88,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const registerService_js_1 = __importDefault(require("../services/auth/registerService.js"));
+const registerService_1 = __importDefault(require("../services/auth/registerService"));
 const registerController = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body;
-        const result = await (0, registerService_js_1.default)(name, email, password, role, res);
-        res.status(201).json({
-            message: "User registered successfully",
-            user: {
-                id: result.id,
-                name: result.name,
-                email: result.email,
-                role: result.role,
-            },
-        });
+        console.log("in controller user with data:", { name, email, password, role });
+        const result = await (0, registerService_1.default)(name, email, password, role, res);
+        res.status(201).json(result);
     }
-    catch (error) {
-        console.error("Registration error:", error.message);
-        res.status(400).json({ message: error.message });
-        next(error);
+    catch (err) {
+        console.error("Register error:", err);
+        next(err);
     }
 };
 exports.default = registerController;

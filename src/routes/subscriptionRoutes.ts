@@ -2,7 +2,8 @@ import express from "express";
 import {
   createSubscriptionController,
   initializePaymentController,
-  paystackWebhookController,
+  verifyPayment,
+
 } from "../controllers/subscriptionController";
 import protect from "../middleware/authMiddleware";
 
@@ -14,6 +15,6 @@ router.post("/create-subscription", createSubscriptionController);
 router.post("/:subscriptionId/initialize-payment", initializePaymentController);
 
 // Paystack webhook
-router.post("/webhook/paystack", express.raw({ type: "application/json" }), paystackWebhookController);
+router.post("/verify-payment", verifyPayment);
 
 export default router;
