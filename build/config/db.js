@@ -1,21 +1,21 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectDB = async () => {
+exports.prisma = void 0;
+exports.connectDB = connectDB;
+const client_1 = require("@prisma/client");
+const errors_1 = require("../errors");
+exports.prisma = new client_1.PrismaClient();
+async function connectDB() {
     try {
-        const mongoUri = process.env.MONGO_URI;
-        if (!mongoUri) {
-            throw new Error("MONGO_URI is not defined in environment variables");
+        await exports.prisma.$connect();
+        console.log("🟢 Database connected successfully");
+    }
+    catch (error) {
+        console.error("🔴 Failed to connect to the database");
+        if (error instanceof Error) {
+            console.error(error);
+            throw new errors_1.DatabaseConnectionError(error.message);
         }
-        await mongoose_1.default.connect(mongoUri);
-        console.log("MongoDB connected");
+        throw new errors_1.DatabaseConnectionError("Cannot connect to PostgreSQL. Check DATABASE_URL or network.");
     }
-    catch (err) {
-        console.error(err.message);
-        process.exit(1);
-    }
-};
-exports.default = connectDB;
+}

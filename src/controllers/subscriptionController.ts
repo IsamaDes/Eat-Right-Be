@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import {
   createSubscriptionService,
   initializeSubscriptionPaymentService,
-  verifyPaystackWebhook,
+  verifyPaymentService,
 } from "../services/subscriptionService";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
@@ -11,7 +11,6 @@ export const createSubscriptionController = async (req: AuthenticatedRequest, re
      if (!subscriberId) {
       return res.status(401).json({ error: "Unauthorized: subscriberId not found" });
     }
-
       const payload = {
       ...req.body,
       subscriberId,
@@ -24,10 +23,19 @@ export const createSubscriptionController = async (req: AuthenticatedRequest, re
   }
 };
 
-export const initializePaymentController = async (req: Request, res: Response) => {
+export const initializePaymentController = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { subscriptionId } = req.params;
-    const response = await initializeSubscriptionPaymentService(subscriptionId, req.body);
+    const userEmail = req.user?.email;
+
+    const payloadWithEmail = {
+        ...req.body,
+        email: userEmail
+    }
+
+    console.log("subscription id on initializing payment", subscriptionId)
+    console.log("Initializing Paystack payment with payload:", payloadWithEmail);
+    const response = await initializeSubscriptionPaymentService(subscriptionId, payloadWithEmail);
 
     return res.status(200).json(response);
   } catch (e: any) {
@@ -35,9 +43,9 @@ export const initializePaymentController = async (req: Request, res: Response) =
   }
 };
 
-export const paystackWebhookController = async (req: Request, res: Response) => {
+export const verifyPayment = async (req: Request, res: Response) => {
   try {
-    await verifyPaystackWebhook(req);
+    await verifyPaymentService(req, res);
     return res.sendStatus(200);
   } catch (e) {
     return res.status(400).json({ error: "Webhook signature mismatch" });

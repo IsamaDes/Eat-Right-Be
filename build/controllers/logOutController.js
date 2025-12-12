@@ -3,13 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logOutService_js_1 = __importDefault(require("../services/auth/logOutService.js"));
+const logOutService_1 = __importDefault(require("../services/auth/logOutService"));
 const logoutUserController = async (req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken;
         if (!refreshToken)
             return res.sendStatus(204);
-        await (0, logOutService_js_1.default)(refreshToken);
+        await (0, logOutService_1.default)(refreshToken);
         res.clearCookie("refreshToken", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",

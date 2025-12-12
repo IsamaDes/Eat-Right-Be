@@ -1,4 +1,10 @@
-import express from "express";
+import dotenv from "dotenv";
+dotenv.config();
+
+console.log("Paystack Secret Key:", process.env.PAYSTACK_SECRET_KEY ? process.env.PAYSTACK_SECRET_KEY : "Missing ❌");
+
+
+import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import cors from "cors";
@@ -12,12 +18,37 @@ import userRoutes from "./routes/userRoutes"
 import chatRoutes from "./routes/chatRoutes"
 import subscriptionRoutes from "./routes/subscriptionRoutes"
 
+
 import { NotFoundError } from "./errors";
 import {
   errorHandler,
 } from "./middleware/errorMiddleware";
+import { initializePaystackTransaction } from "./utils/paystack";
 
 const app = express();
+app.post("/test-paystack", async (req: Request, res: Response) => {
+  try {
+    // Hard-coded test data
+    const payload = {
+      amount: 1000, // 10 NGN in kobo
+      email: "client@example.com", // any email
+      reference: `test_${Date.now()}`,
+      currency: "NGN",
+      callback_url: "https://example.com/payment-success",
+    };
+
+    const response = await initializePaystackTransaction(payload);
+    console.log("Paystack response:", response);
+
+    return res.json({
+      message: "Paystack test successful",
+      authorization_url: response.data.authorization_url,
+    });
+  } catch (error: any) {
+    console.error("Paystack test failed:", error.response?.data || error.message);
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 if (process.env.NODE_ENV !== "test") {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -50,7 +81,7 @@ app.use(
 
 app.use(
   cors({
-    origin: ["https://eatright-theta.vercel.app", "http://localhost:5173"],
+    origin: ["https://eat-right-fe.vercel.app", "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -70,6 +101,9 @@ app.use("/nutritionist", nutritionistRoutes);
 app.use("/users", userRoutes);
 app.use("/chats", chatRoutes)
 app.use("/subscriptions", subscriptionRoutes);
+app.get("/test-paystack-key", (req, res) => {
+  res.json({ key: process.env.PAYSTACK_SECRET_KEY });
+});
 
 app.use((req, res, next) => {
   next(new NotFoundError(`Route ${req.originalUrl} not found`));

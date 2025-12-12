@@ -96,7 +96,7 @@ const loginController = async (req, res, next) => {
         res.status(200).json(response);
     }
     catch (err) {
-        console.error("Login Error:", err.message);
+        console.error("login error:", err);
         next(err);
     }
 };
