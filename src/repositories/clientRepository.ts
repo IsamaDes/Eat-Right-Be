@@ -28,6 +28,7 @@ export const ClientRepository = {
           }
         }
       },
+      subscription: true,
       mealPlans: true,
       user: true
     }
@@ -41,7 +42,14 @@ export const ClientRepository = {
     });
   },
 
-  
+  async findClientByUserId(subscriberId: string){
+   return prisma.clientProfile.findUnique({
+    where: {id: subscriberId},
+    include: { subscription: true }
+  })
+  },
+
+
   async findClientsByNutritionist(nutritionistId: string) {
     return prisma.clientProfile.findMany({
       where: { assignedNutritionistId: nutritionistId },

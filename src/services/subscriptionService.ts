@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
+import { ClientRepository } from "../repositories/clientRepository";
 
 import axios from "axios";
 
 const prisma = new PrismaClient();
 
 import { initializePaystackTransaction } from "../utils/paystack";
-import crypto from "crypto";
 
 export const createSubscriptionService = async (payload: any) => {
   const {
@@ -18,6 +18,23 @@ export const createSubscriptionService = async (payload: any) => {
     currency,
     metadata,
   } = payload;
+
+  const testclient = await prisma.clientProfile.findUnique({
+  where: { id: "cmj2jew3n000w10lugb9pj86n" }
+});
+console.log(testclient);
+
+ const client = await ClientRepository.findClientByUserId(subscriberId)
+
+
+if (!client) {
+  throw new Error("Client not found"); 
+}
+
+  if (client.subscription) {
+    throw new Error("Client already has an active subscription");
+  }
+
 
   const subscription = await prisma.subscription.create({
     data: {
@@ -78,32 +95,6 @@ export const initializeSubscriptionPaymentService = async (
     throw new Error("Payment Initialization Failed")
   }
 };
-
-//  const verifyPaystackWebhook = async (req: any) => {
-//   const secret = process.env.PAYSTACK_SECRET_KEY!;
-//   const hash = crypto
-//     .createHmac("sha512", secret)
-//     .update(req.body)
-//     .digest("hex");
-
-//   if (hash !== req.headers["x-paystack-signature"]) {
-//     throw new Error("Invalid webhook signature");
-//   }
-
-//   const event = JSON.parse(req.body.toString());
-
-//   if (event.event === "charge.success") {
-//     const reference = event.data.reference;
-
-//     await prisma.subscription.update({
-//       where: { reference },
-//       data: { status: "active" },
-//     });
-//      return res.redirect("http://localhost:5173/client/profile");
-//   }
-// };
-
-
 
 export const verifyPaymentService = async (req: Request, res: Response) => {
   try {

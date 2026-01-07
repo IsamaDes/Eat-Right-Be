@@ -1,10 +1,11 @@
 import type { Response, NextFunction } from "express";
 import { createMealPlanService,getMealPlansService, updateMealPlanService, getMealPlanByIdService, getNutritionistClients } from "../../services/nutrition/NutrionistService"
-import { UserRepository } from "../../repositories/userRepository";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 import { commentOnMealPlanService } from "../../services/nutrition/NutrionistService";
 import { BadRequestError, NotFoundError } from "../../errors";
 import getNutritionistDashboardService from "../../services/nutrition/NutritionistDashboardService";
+import { NutritionistRepository } from "../../repositories/nutritionistRepository";
+// import { prisma } from "../../lib/prisma";
 
     export const getNutritionistDashboard = async(req: AuthenticatedRequest, res: Response) => {
     try{
@@ -28,7 +29,7 @@ import getNutritionistDashboardService from "../../services/nutrition/Nutritioni
 export const getNutritionistProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!._id; 
-    const nutritionist = await UserRepository.findById(userId);
+    const nutritionist = await NutritionistRepository.getNutritionistProfile(userId)
   
     res.status(200).json({
       success: true,
@@ -55,9 +56,16 @@ export const getClients = async (req: AuthenticatedRequest, res: Response) => {
 
 
 export const createMealPlan = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+
+  console.log("RAW BODY:", req.body);
+console.log("TYPE weeklyMealPlans:", typeof req.body.weeklyMealPlans);
+console.log("IS ARRAY:", Array.isArray(req.body.weeklyMealPlans));
   try {
     const userId = req.user!._id;
-    const mealPlan = await createMealPlanService(userId, req.body);
+    console.log("userId", userId)
+   
+    const creatMealplanPayload = {...req.body, nutritionistId: userId}
+    const mealPlan = await createMealPlanService(creatMealplanPayload);
     res.status(201).json({ success: true, data: mealPlan });
   } catch (err: any) {
     next(err);

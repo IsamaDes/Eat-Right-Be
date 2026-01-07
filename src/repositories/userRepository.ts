@@ -35,7 +35,11 @@ export const UserRepository = {
     const user = await prisma.user.findUnique({
       where: { id },
       include: {
-        clientProfile: true,
+         clientProfile: {
+        include: {
+          mealPlans: true, 
+        },
+      },
         nutritionistProfile: true,
         adminProfile: true,
       },
@@ -71,21 +75,6 @@ export const UserRepository = {
       orderBy: { createdAt: "desc" },
     });
   },
-
-    async findLatestUsersByRole(role: UserRole, limit = 5) {
-    return prisma.user.findMany({
-      where: { role },
-      orderBy: { createdAt: "desc" },
-      take: limit,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        createdAt: true,
-      },
-    });
-  },
-
 
   async deleteAll() {
     return prisma.user.deleteMany({});

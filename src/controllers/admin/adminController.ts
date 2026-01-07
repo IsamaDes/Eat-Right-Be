@@ -24,10 +24,7 @@ export const adminProfile = async(req: AuthenticatedRequest, res: Response) => {
 }
 
 
-export const getClientProfile = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
+export const getClientProfile = async(req: AuthenticatedRequest, res: Response) => {
   try {
     const adminId = req.user?._id;
     if (!adminId) throw new UnauthorizedError("Unauthorized");

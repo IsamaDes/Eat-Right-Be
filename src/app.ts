@@ -1,11 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log("Paystack Secret Key:", process.env.PAYSTACK_SECRET_KEY ? process.env.PAYSTACK_SECRET_KEY : "Missing ❌");
-
-
 import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
+import morgan from 'morgan'
 import helmet from "helmet";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
@@ -17,6 +15,8 @@ import adminRoutes from "./routes/adminRoutes";
 import userRoutes from "./routes/userRoutes"
 import chatRoutes from "./routes/chatRoutes"
 import subscriptionRoutes from "./routes/subscriptionRoutes"
+import analyticsRoutes from "./routes/anylyticsRoutes"
+
 
 
 import { NotFoundError } from "./errors";
@@ -89,6 +89,7 @@ app.use(
 );
 
 app.use(cookieParser());
+app.use(morgan("dev"));
 app.use(express.json()); // This is required to parse JSON bodies... was getting wrong input without it.... has to be before routes
 
 app.use(express.urlencoded({ extended: true }));
@@ -100,6 +101,7 @@ app.use("/client", clientRoutes);
 app.use("/nutritionist", nutritionistRoutes);
 app.use("/users", userRoutes);
 app.use("/chats", chatRoutes)
+app.use("/analytics", analyticsRoutes)
 app.use("/subscriptions", subscriptionRoutes);
 app.get("/test-paystack-key", (req, res) => {
   res.json({ key: process.env.PAYSTACK_SECRET_KEY });

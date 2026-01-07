@@ -7,12 +7,6 @@ export type CreateCommentInput = {
 };
 
 export const mealPlanRepository = {
- 
-  async create(mealPlanData: any) {
-    return prisma.mealPlan.create({
-      data: mealPlanData,
-    });
-  },
 
   async comment(input: CreateCommentInput){
      return prisma.mealPlanComment.create({
@@ -95,4 +89,86 @@ export const mealPlanRepository = {
       where: { id: mealPlanId },
     });
   },
-};
+
+
+
+async create(mealPlanData: any) {
+  const { 
+    clientId, 
+    nutritionistProfileId, 
+    dateRangeStart, 
+    dateRangeEnd, 
+    numberOfWeeks, 
+    healthGoal, 
+    nutritionalRequirement, 
+    weeklyMealPlans 
+  } = mealPlanData;
+
+  return prisma.mealPlan.create({
+    data: {
+      dateRangeStart: new Date(dateRangeStart),
+      dateRangeEnd: new Date(dateRangeEnd),
+      numberOfWeeks,
+      healthGoal,
+      nutritionalRequirement,
+      client: {
+        connect: { id: clientId }
+      },
+      nutritionist: {
+        connect: { id: nutritionistProfileId }
+      },
+      weeklyMealPlans: {
+        create: weeklyMealPlans.map((week: any) => ({
+          weekNumber: week.weekNumber,
+          dailyPlans: {
+            create: week.dailyPlans.map((day: any) => ({
+              dayOfWeek: day.dayOfWeek,
+              meals: {
+                create: day.meals.map((meal: any) => ({
+                  timeOfDay: meal.timeOfDay,
+                  typeOfMeal: meal.typeOfMeal,
+                  food: meal.food,
+                  nutritionalContent: meal.nutritionalContent
+                }))
+              }
+            }))
+          }
+        }))
+      }
+    },
+     include: {
+    weeklyMealPlans: {
+      include: {
+        dailyPlans: {
+          include: {
+            meals: true
+          }
+        }
+      }
+    }
+  }
+  });
+},
+
+
+  async getClientMealPlans(clientId: string) {
+    const mealPlans = await prisma.mealPlan.findMany({
+      where: { clientId },
+      include: {
+        weeklyMealPlans: {
+          include: {
+            dailyPlans: {
+              include: {
+                meals: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return mealPlans;
+  }
+
+}

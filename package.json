@@ -73,6 +73,7 @@
     "@types/express": "^4.17.17",
     "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.2",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^20.11.20",
     "@types/object.groupby": "^1.0.4",
     "@types/pdfkit": "^0.13.4",

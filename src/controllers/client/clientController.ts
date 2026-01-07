@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 import { NotFoundError, UnauthorizedError } from "../../errors";
 import { ClientRepository } from "../../repositories/clientRepository";
+import { clientService } from "../../services/clientService";
 
 
 // Returns the logged-in client's profile
@@ -37,8 +38,21 @@ import { ClientRepository } from "../../repositories/clientRepository";
 };
 
 export const getClientMealPlans = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const clientId = req.user?._id 
+    if (!clientId) return res.status(400).json({ success: false, message: 'clientId is required' });
 
-}
+    const data = await clientService.getClientMealPlans(clientId);
+
+    res.status(200).json({
+      success: true,
+      data
+    });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 export const getClientMealSchedule = async (req: AuthenticatedRequest, res: Response) => {
 

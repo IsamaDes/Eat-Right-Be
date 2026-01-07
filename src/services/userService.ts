@@ -2,7 +2,7 @@ import { AdminRepository } from "../repositories/adminRepository";
 import { ClientRepository } from "../repositories/clientRepository";
 import { NutritionistRepository } from "../repositories/nutritionistRepository";
 import { UserRepository } from "../repositories/userRepository";
-import { UpdateClientProfileSchema, UpdateNutritionistProfileSchema, UpdateAdminProfileSchema, UpdateClientProfileInput, UpdateNutritionistProfileInput, UpdateAdminProfileInput } from "../utils/validators/UserValidator";
+import { UpdateClientProfileSchema, UpdateNutritionistProfileSchema, UpdateAdminProfileSchema } from "../utils/validators/UserValidator";
 
 export const getUserService = {
     async getCurrentUserService(userId: string){

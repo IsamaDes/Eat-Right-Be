@@ -1,22 +1,24 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import ChatService from "../services/chatService";
-import { io } from "../utils/socket";
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
 export default class ChatController {
-  static async getMessages(req: Request, res: Response) {
+  static async getMessages(req: AuthenticatedRequest, res: Response) {
     try {
-      const { senderId, receiverId } = req.query;
-
-      if (!senderId || !receiverId)
+      const receiverId = req.user?._id;
+      const senderId = req.params.receiverId;
+        if (!receiverId )
         return res.status(400).json({
           success: false,
-          message: "sender_id and receiver_id are required",
+          message: "receiverId is required",
+        });
+      if (!senderId )
+        return res.status(400).json({
+          success: false,
+          message: "senderId is required",
         });
 
-      const messages = await ChatService.getMessages(
-        senderId as string,
-        receiverId as string
-      );
+      const messages = await ChatService.getMessages( senderId, receiverId);
 
       res.json({ success: true, data: messages });
     } catch (err: any) {
@@ -24,29 +26,4 @@ export default class ChatController {
     }
   }
 
-  static async sendMessage(req: Request, res: Response) {
-    try {
-      const { senderId, receiverId, message, messageType } = req.body;
-
-      if (!senderId || !receiverId || !message)
-        return res.status(400).json({
-          success: false,
-          message: "senderId, receiverId & message required",
-        });
-
-      const saved = await ChatService.sendMessage({
-        senderId,
-        receiverId,
-        message,
-        messageType,
-      });
-
-      // Emit socket event to receiver
-      io.to(receiverId).emit("new_message", saved);
-
-      res.json({ success: true, data: saved });
-    } catch (err: any) {
-      res.status(500).json({ success: false, message: err.message });
-    }
-  }
 }

@@ -117,12 +117,11 @@ try{
       throw new Error(`Nutritionist profile not found for user ID ${nutritionistId}`);
     }
 
-  // const updatedClient = await AdminRepository.assignClientNutritionist(clientId, nutritionistId)
 
     const updatedClient = await prisma.clientProfile.update({
       where: { id: clientProfile.id },
       data: {
-        assignedNutritionistId: nutritionistProfile.id, // ← Use assignedNutritionistId
+        assignedNutritionistId: nutritionistProfile.id, 
       },
       include: {
         user: {
