@@ -10,7 +10,7 @@ router.get(
 );
 
 router.get(
-  "/meal-plans/:id",
+  "/meal-plans",
   protect,
   getClientMealPlans
   

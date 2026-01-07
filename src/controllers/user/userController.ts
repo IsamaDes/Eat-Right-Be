@@ -27,7 +27,7 @@ export const getCurrentUser = async (req: AuthenticatedRequest, res: Response) =
 
 export const updateProfileController = async (req: AuthenticatedRequest, res: Response) => {
 try{
-   if (!req.user) {
+   if (!req.user?._id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const userId = req.user._id;

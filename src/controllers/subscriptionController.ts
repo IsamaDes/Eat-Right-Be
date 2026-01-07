@@ -7,14 +7,8 @@ import {
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
 export const createSubscriptionController = async (req: AuthenticatedRequest, res: Response) => {
-    const subscriberId = req.user?._id
-     if (!subscriberId) {
-      return res.status(401).json({ error: "Unauthorized: subscriberId not found" });
-    }
-      const payload = {
-      ...req.body,
-      subscriberId,
-    };
+   
+      const payload = req.body;
   try {
     const subscription = await createSubscriptionService(payload);
     return res.status(201).json(subscription);

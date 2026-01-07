@@ -148,6 +148,27 @@ async create(mealPlanData: any) {
     }
   }
   });
-}
+},
+
+
+  async getClientMealPlans(clientId: string) {
+    const mealPlans = await prisma.mealPlan.findMany({
+      where: { clientId },
+      include: {
+        weeklyMealPlans: {
+          include: {
+            dailyPlans: {
+              include: {
+                meals: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return mealPlans;
+  }
 
 }

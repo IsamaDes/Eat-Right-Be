@@ -55,7 +55,6 @@ export const updateMealPlanService = async (userId: string, mealPlanId: string, 
 export const getMealPlansService = async (userId: string, filters: any = {}) => {
   const user = await UserRepository.findById(userId);
   const query = user.id
-  // Admins see all; nutritionist see only their own; clients see their plans
 
   const page = Number(filters.page) || 1;
   const limit = Number(filters.limit) || 10;

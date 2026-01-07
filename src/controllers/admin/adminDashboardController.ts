@@ -7,7 +7,6 @@ import {
 } from "../../services/adminService";
 import { BadRequestError, UnauthorizedError } from "../../errors";
 
-// Returns basic stats for the admin dashboard
 export const getAdminDashboard = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const dashboardData = await getAdminDashboardService();
@@ -21,7 +20,6 @@ export const getAdminDashboard = async (req: AuthenticatedRequest, res: Response
   }
 };
 
-// Get user by ID
 export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
@@ -52,7 +50,6 @@ export const assignNutritionistToClient = async (req: AuthenticatedRequest, res:
 
   try {
     const updatedClient = await assignNutritionistToClientService(clientId, nutritionistId);
-
     res.status(200).json({
       success: true,
       message: "Nutritionist assigned successfully",

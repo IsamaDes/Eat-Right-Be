@@ -1,11 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log("Paystack Secret Key:", process.env.PAYSTACK_SECRET_KEY ? process.env.PAYSTACK_SECRET_KEY : "Missing ❌");
-
-
 import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
+import morgan from 'morgan'
 import helmet from "helmet";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
@@ -89,6 +87,7 @@ app.use(
 );
 
 app.use(cookieParser());
+app.use(morgan("dev"));
 app.use(express.json()); // This is required to parse JSON bodies... was getting wrong input without it.... has to be before routes
 
 app.use(express.urlencoded({ extended: true }));

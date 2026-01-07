@@ -18,23 +18,21 @@ model BlacklistedToken {
 }
 
 model User {
-  id                         String               @id @default(cuid())
-  name                       String?
-  email                      String               @unique
-  password                   String
-  role                       UserRole
-  createdAt                  DateTime             @default(now())
-  updatedAt                  DateTime             @updatedAt
-  lockUntil                  DateTime?
-  loginAttempts              Int                  @default(0)
-  adminProfile               AdminProfile?
-  appointmentsAsClient       Appointment[]        @relation("ClientAppointments")
-  appointmentsAsNutritionist Appointment[]        @relation("NutritionistAppointments")
-  chatsReceived              ChatMessage[]        @relation("ReceivedMessages")
-  chatsSent                  ChatMessage[]        @relation("SentMessages")
-  clientProfile              ClientProfile?
-  mealPlanComments           MealPlanComment[]
-  nutritionistProfile        NutritionistProfile?
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String               @unique
+  password            String
+  role                UserRole
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  lockUntil           DateTime?
+  loginAttempts       Int                  @default(0)
+  adminProfile        AdminProfile?
+  chatsReceived       ChatMessage[]        @relation("ReceivedMessages")
+  chatsSent           ChatMessage[]        @relation("SentMessages")
+  clientProfile       ClientProfile?
+  mealPlanComments    MealPlanComment[]
+  nutritionistProfile NutritionistProfile?
 }
 
 model HealthHistory {
@@ -45,14 +43,13 @@ model HealthHistory {
 }
 
 model NutritionistProfile {
-  id                  String          @id @default(cuid())
-  userId              String          @unique
-  certification       String?
-  experienceYears     Int?
-  appointmentsCreated Appointment[]   @relation("CreatedAppointments")
-  clients             ClientProfile[] @relation("NutritionistAssignments")
-  createdMealPlans    MealPlan[]      @relation("NutritionistMealPlans")
-  user                User            @relation(fields: [userId], references: [id])
+  id               String          @id @default(cuid())
+  userId           String          @unique
+  certification    String?
+  experienceYears  Int?
+  clients          ClientProfile[] @relation("NutritionistAssignments")
+  createdMealPlans MealPlan[]      @relation("NutritionistMealPlans")
+  user             User            @relation(fields: [userId], references: [id])
 }
 
 model ClientProfile {
@@ -61,7 +58,7 @@ model ClientProfile {
   assignedNutritionistId String?
   healthGoal             String?
   age                    Int?
-  subscription           String?
+  subscription           Subscription?        @relation("ClientSubscription")
   assignedNutritionist   NutritionistProfile? @relation("NutritionistAssignments", fields: [assignedNutritionistId], references: [id])
   user                   User                 @relation(fields: [userId], references: [id])
   healthHistory          HealthHistory[]      @relation("HealthHistory")
@@ -76,19 +73,6 @@ model AdminProfile {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   user            User     @relation(fields: [userId], references: [id])
-}
-
-model Appointment {
-  id             String               @id @default(cuid())
-  date           DateTime?
-  nutritionistId String
-  clientId       String
-  createdById    String?
-  notes          String?
-  status         AppointmentStatus    @default(pending)
-  client         User                 @relation("ClientAppointments", fields: [clientId], references: [id])
-  createdBy      NutritionistProfile? @relation("CreatedAppointments", fields: [createdById], references: [id])
-  nutritionist   User                 @relation("NutritionistAppointments", fields: [nutritionistId], references: [id])
 }
 
 model ChatMessage {
@@ -157,31 +141,25 @@ model MealPlanComment {
 }
 
 model Subscription {
-  id                String   @id @default(cuid())
-  subscriberId      String
+  id                String        @id @default(cuid())
+  subscriberId      String        @unique
+  clientProfile     ClientProfile @relation("ClientSubscription", fields: [subscriberId], references: [id])
   planName          String
   amount            Int
   billingInterval   String
   billingCycleCount Int
-  currency          String   @default("NGN")
-  status            String   @default("pending")
-  reference         String?  @unique
+  currency          String        @default("NGN")
+  status            String        @default("pending")
+  reference         String?       @unique
   metadata          Json?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 }
 
 enum UserRole {
   ADMIN
   CLIENT
   NUTRITIONIST
-}
-
-enum AppointmentStatus {
-  pending
-  confirmed
-  completed
-  cancelled
 }
 
 enum MessageType {
