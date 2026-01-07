@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getClientMealSchedule = exports.getClientMealPlans = exports.getClientProfile = void 0;
 const errors_1 = require("../../errors");
 const clientRepository_1 = require("../../repositories/clientRepository");
+const clientService_1 = require("../../services/clientService");
 // Returns the logged-in client's profile
 const getClientProfile = async (req, res) => {
     try {
@@ -37,6 +38,20 @@ const getClientProfile = async (req, res) => {
 };
 exports.getClientProfile = getClientProfile;
 const getClientMealPlans = async (req, res) => {
+    try {
+        const clientId = req.user?._id;
+        if (!clientId)
+            return res.status(400).json({ success: false, message: 'clientId is required' });
+        const data = await clientService_1.clientService.getClientMealPlans(clientId);
+        res.status(200).json({
+            success: true,
+            data
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
 };
 exports.getClientMealPlans = getClientMealPlans;
 const getClientMealSchedule = async (req, res) => {
