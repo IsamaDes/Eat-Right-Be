@@ -15,6 +15,8 @@ import adminRoutes from "./routes/adminRoutes";
 import userRoutes from "./routes/userRoutes"
 import chatRoutes from "./routes/chatRoutes"
 import subscriptionRoutes from "./routes/subscriptionRoutes"
+import analyticsRoutes from "./routes/anylyticsRoutes"
+
 
 
 import { NotFoundError } from "./errors";
@@ -99,6 +101,7 @@ app.use("/client", clientRoutes);
 app.use("/nutritionist", nutritionistRoutes);
 app.use("/users", userRoutes);
 app.use("/chats", chatRoutes)
+app.use("/analytics", analyticsRoutes)
 app.use("/subscriptions", subscriptionRoutes);
 app.get("/test-paystack-key", (req, res) => {
   res.json({ key: process.env.PAYSTACK_SECRET_KEY });
