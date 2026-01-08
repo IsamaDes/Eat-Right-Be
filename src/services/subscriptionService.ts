@@ -1,33 +1,32 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import { ClientRepository } from "../repositories/clientRepository";
+import { CreateSubscriptionInput, InitializePaymentInput } from "../types/payment";
+import { initializePaystackTransaction } from "../utils/paystack";
+
 
 import axios from "axios";
 
 const prisma = new PrismaClient();
 
-import { initializePaystackTransaction } from "../utils/paystack";
 
-export const createSubscriptionService = async (payload: any) => {
+export const createSubscriptionService = async (input: CreateSubscriptionInput) => {
   const {
     subscriberId,
-    plan_name,
+    planName,
     amount,
-    billing_interval,
-    billing_cycle_count,
-    currency,
+    billingInterval,
+    billingCycleCount,
+    currency = "NGN",
     metadata,
-  } = payload;
+  } = input;
 
-  const testclient = await prisma.clientProfile.findUnique({
-  where: { id: "cmj2jew3n000w10lugb9pj86n" }
-});
-console.log(testclient);
-
- const client = await ClientRepository.findClientByUserId(subscriberId)
-
-
-if (!client) {
+  return prisma.$transaction(async (tx) => {
+  const client = await tx.clientProfile.findUnique({
+  where: { id: subscriberId },
+  include: { user: true, subscription: true },
+  }); 
+  
+  if (!client) {
   throw new Error("Client not found"); 
 }
 
@@ -36,56 +35,61 @@ if (!client) {
   }
 
 
-  const subscription = await prisma.subscription.create({
+  const subscription = await tx.subscription.create({
     data: {
-      subscriberId: subscriberId,
-      planName: plan_name,
+      subscriberId,
+      planName,
       amount,
-      billingInterval: billing_interval,
-      billingCycleCount: billing_cycle_count,
+      billingInterval,
+      billingCycleCount,
       currency: currency || "NGN",
       metadata,
       status: "pending",
     },
   });
-
   return subscription;
+  });
 };
+
 
 export const initializeSubscriptionPaymentService = async (
   subscriptionId: string,
-  paymentPayload: any
+  input: InitializePaymentInput,
 ) => {
     
-  const subscription = await prisma.subscription.findUnique({
+  const subscription = await prisma.$transaction(async (trx) => {
+    const sub = await prisma.subscription.findUnique({
     where: { id: subscriptionId },
   });
 
-  if (!subscription) {
+  if (!sub) {
     throw new Error("Subscription not found");
   }
 
-  const reference = paymentPayload.reference || `sub_${Date.now()}`;
+  if (sub.status !== "pending") {
+    throw new Error("Subscription is not payable");
+  }
 
-  const updateSubscription = await prisma.subscription.update({
+  const reference = input.reference || `sub_${Date.now()}`;
+
+  const updateSub = await prisma.subscription.update({
     where: { id: subscriptionId },
     data: { reference },
   });
 
-  if(!updateSubscription){
+  if(!updateSub){
     throw new Error("Subscription update failed")
   }
 
   try {
     const payment = await initializePaystackTransaction({
     amount: subscription.amount * 100, 
-    email: paymentPayload.email,
     reference,
     currency: subscription.currency,
-    callback_url: paymentPayload.redirect_url,
+    callback_url: input.redirectUrl,
     metadata: {
       subscriptionId,
-      auto_renew: paymentPayload.metadata?.auto_renew,
+      auto_renew: input.metadata?.auto_renew,
     },
   }); 
   console.log(payment)
@@ -94,7 +98,9 @@ export const initializeSubscriptionPaymentService = async (
     console.error("Payment initiation failed")
     throw new Error("Payment Initialization Failed")
   }
+  })
 };
+
 
 export const verifyPaymentService = async (req: Request, res: Response) => {
   try {
