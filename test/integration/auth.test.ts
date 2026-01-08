@@ -137,7 +137,6 @@ describe("Auth Integration Tests", () => {
     };
 
     beforeEach(async () => {
-      // Create user manually with hashed password
       await request(app)
         .post("/auth/register")
         .send(testUser);
