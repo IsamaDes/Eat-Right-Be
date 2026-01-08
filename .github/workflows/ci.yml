@@ -10,6 +10,9 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -31,3 +34,11 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage/lcov.info
+
+      - name: Setup Prisma
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Apply Prisma migrations
+        run: npx prisma migrate deploy

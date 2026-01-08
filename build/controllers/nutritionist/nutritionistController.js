@@ -5,10 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentOnProject = exports.getMealPlanById = exports.updateMealPlan = exports.getMealPlans = exports.createMealPlan = exports.getClients = exports.getNutritionistProfile = exports.getNutritionistDashboard = void 0;
 const NutrionistService_1 = require("../../services/nutrition/NutrionistService");
-const userRepository_1 = require("../../repositories/userRepository");
 const NutrionistService_2 = require("../../services/nutrition/NutrionistService");
 const errors_1 = require("../../errors");
 const NutritionistDashboardService_1 = __importDefault(require("../../services/nutrition/NutritionistDashboardService"));
+const nutritionistRepository_1 = require("../../repositories/nutritionistRepository");
+// import { prisma } from "../../lib/prisma";
 const getNutritionistDashboard = async (req, res) => {
     try {
         const nutritionistId = req.user._id;
@@ -31,7 +32,7 @@ exports.getNutritionistDashboard = getNutritionistDashboard;
 const getNutritionistProfile = async (req, res) => {
     try {
         const userId = req.user._id;
-        const nutritionist = await userRepository_1.UserRepository.findById(userId);
+        const nutritionist = await nutritionistRepository_1.NutritionistRepository.getNutritionistProfile(userId);
         res.status(200).json({
             success: true,
             data: nutritionist,
@@ -57,9 +58,14 @@ const getClients = async (req, res) => {
 };
 exports.getClients = getClients;
 const createMealPlan = async (req, res, next) => {
+    console.log("RAW BODY:", req.body);
+    console.log("TYPE weeklyMealPlans:", typeof req.body.weeklyMealPlans);
+    console.log("IS ARRAY:", Array.isArray(req.body.weeklyMealPlans));
     try {
         const userId = req.user._id;
-        const mealPlan = await (0, NutrionistService_1.createMealPlanService)(userId, req.body);
+        console.log("userId", userId);
+        const creatMealplanPayload = { ...req.body, nutritionistId: userId };
+        const mealPlan = await (0, NutrionistService_1.createMealPlanService)(creatMealplanPayload);
         res.status(201).json({ success: true, data: mealPlan });
     }
     catch (err) {

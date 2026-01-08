@@ -15,7 +15,7 @@ import adminRoutes from "./routes/adminRoutes";
 import userRoutes from "./routes/userRoutes"
 import chatRoutes from "./routes/chatRoutes"
 import subscriptionRoutes from "./routes/subscriptionRoutes"
-import analyticsRoutes from "./routes/anylyticsRoutes"
+import analyticsRoutes from "./routes/analyticsRoutes"
 
 
 
@@ -28,10 +28,10 @@ import { initializePaystackTransaction } from "./utils/paystack";
 const app = express();
 app.post("/test-paystack", async (req: Request, res: Response) => {
   try {
-    // Hard-coded test data
+   
     const payload = {
       amount: 1000, // 10 NGN in kobo
-      email: "client@example.com", // any email
+      email: "client@example.com", 
       reference: `test_${Date.now()}`,
       currency: "NGN",
       callback_url: "https://example.com/payment-success",

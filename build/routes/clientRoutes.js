@@ -8,6 +8,6 @@ const router = express_1.default.Router();
 const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware"));
 const clientController_1 = require("../controllers/client/clientController");
 router.get("/profile", authMiddleware_1.default, clientController_1.getClientProfile);
-router.get("/meal-plans/:id", authMiddleware_1.default, clientController_1.getClientMealPlans);
+router.get("/meal-plans", authMiddleware_1.default, clientController_1.getClientMealPlans);
 router.get("/meal-schedule", authMiddleware_1.default, clientController_1.getClientMealSchedule);
 exports.default = router;
