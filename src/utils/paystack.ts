@@ -13,3 +13,12 @@ export const initializePaystackTransaction = async (payload: any) => {
 
   return response.data;
 };
+
+
+export enum PaymentErrorCode {
+  MISSING_REFERENCE = "PAY_001",
+  VERIFICATION_FAILED = "PAY_002",
+  TRANSACTION_NOT_SUCCESSFUL = "PAY_003",
+  SUBSCRIPTION_NOT_FOUND = "PAY_004",
+  INTERNAL_ERROR = "PAY_500",
+}

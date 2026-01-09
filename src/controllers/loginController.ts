@@ -1,6 +1,9 @@
+import type { Request, Response, NextFunction } from "express";
+import loginUser from "../services/auth/loginService";
+
 /**
  * @swagger
- * /api/auth/login:
+ * /auth/login:
  *   post:
  *     summary: User login
  *     description: Authenticates a user using email and password, returning a JWT token if valid.
@@ -83,9 +86,6 @@
  *                   type: string
  *                   example: Something went wrong
  */
-
-import type { Request, Response, NextFunction } from "express";
-import loginUser from "../services/auth/loginService";
 
 const loginController = async (req: Request, res: Response, next: NextFunction) => {
   try {

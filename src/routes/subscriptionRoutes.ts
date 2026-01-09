@@ -1,20 +1,20 @@
 import express from "express";
 import {
   createSubscriptionController,
-  initializePaymentController,
   verifyPayment,
+  verifyPaymentTest,
 
 } from "../controllers/subscriptionController";
 import protect from "../middleware/authMiddleware";
 
 const router = express.Router();
 
+router.post("/verify-payment", verifyPayment);
+router.get("/verify-payment-test", verifyPaymentTest);
+
 router.use(protect)
 
 router.post("/create-subscription", createSubscriptionController);
-router.post("/:subscriptionId/initialize-payment", initializePaymentController);
 
-// Paystack webhook
-router.post("/verify-payment", verifyPayment);
 
 export default router;

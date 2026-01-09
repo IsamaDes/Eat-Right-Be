@@ -15,7 +15,7 @@ import logOutController  from "../controllers/logOutController";
 
 /**
  * @swagger
- * /api/auth/register:
+ * /auth/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Auth]
@@ -53,7 +53,7 @@ router.post("/register", registerController);
 
 /**
  * @swagger
- * /api/auth/login:
+ * /auth/login:
  *   post:
  *     summary: Log in a user
  *     tags: [Auth]
