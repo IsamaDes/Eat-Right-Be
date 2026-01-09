@@ -58,7 +58,7 @@ model ClientProfile {
   assignedNutritionistId String?
   healthGoal             String?
   age                    Int?
-  subscription           Subscription?        @relation("ClientSubscription")
+  subscription           Subscription[]        @relation("ClientSubscription")
   assignedNutritionist   NutritionistProfile? @relation("NutritionistAssignments", fields: [assignedNutritionistId], references: [id])
   user                   User                 @relation(fields: [userId], references: [id])
   healthHistory          HealthHistory[]      @relation("HealthHistory")
@@ -142,18 +142,24 @@ model MealPlanComment {
 
 model Subscription {
   id                String        @id @default(cuid())
-  subscriberId      String        @unique
+  subscriberId      String        
   clientProfile     ClientProfile @relation("ClientSubscription", fields: [subscriberId], references: [id])
+  clientEmail         String?
   planName          String
   amount            Int
   billingInterval   String
   billingCycleCount Int
   currency          String        @default("NGN")
-  status            String        @default("pending")
+  status            String        @default("pending") // pending | active | failed
   reference         String?       @unique
+  startDate          DateTime?
+  endDate            DateTime?
   metadata          Json?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
+
+  @@index([subscriberId, status])
+  @@index([status])
 }
 
 enum UserRole {

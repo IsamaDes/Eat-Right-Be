@@ -1,15 +1,13 @@
 export interface CreateSubscriptionInput {
-  subscriberId: string;
+ userId: string;
   planName: string;
   amount: number;
   billingInterval: "daily" | "weekly" | "monthly" | "yearly";
   billingCycleCount: number;
   currency?: string;
   metadata?: Record<string, any>;
-}
-
-export interface InitializePaymentInput {
-  redirectUrl: string;
-  metadata?: Record<string, any>;
+  gateway: string;
   reference?: string;
 }
+
+
