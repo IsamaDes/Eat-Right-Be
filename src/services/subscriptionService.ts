@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { CreateSubscriptionInput } from "../types/payment";
@@ -6,6 +9,7 @@ import axios from "axios";
 
 const prisma = new PrismaClient();
 
+const PAYSTACK_CALLBACK_URL = process.env.PAYSTACK_CALLBACK_URL!;
 
 export const createSubscriptionService = async (input: CreateSubscriptionInput) => {
   const {
@@ -71,33 +75,17 @@ if (gateway !== "paystack") {
   console.error(" Unsupported gateway:", gateway);
   throw new Error("Unsupported payment gateway");
 }
-console.log("Gateway validated:", gateway);
+ console.log("Gateway validated:", gateway);
 
  console.log("Step 6: Initializing Paystack payment...");
-
-
-    const FRONTEND_URL = "https://eat-right-fe.vercel.app";;
-    const callbackUrl = `${FRONTEND_URL}/subscriptions/verify-payment`;
-
-     console.log("Paystack payload:", {
-      amount: subscription.amount * 100,
-      gateway,
-      reference: paymentReference,
-      currency: subscription.currency,
-      callbackUrl: callbackUrl,
-      metadata: {
-        subscriptionId: subscription.id,
-        autoRenew: input.metadata?.autoRenew,
-      },
-    });
-
+ 
   try {
     const payment = await initializePaystackTransaction({
     email: client.user.email,
     amount: subscription.amount * 100, 
     reference: paymentReference,
     currency: subscription.currency,
-    callbackUrl: callbackUrl,
+    callbackUrl: PAYSTACK_CALLBACK_URL,
     metadata: {
       subscriptionId: subscription.id,
       autoRenew: input.metadata?.autoRenew,
@@ -142,7 +130,6 @@ console.log("Gateway validated:", gateway);
 
 export const verifyPaymentService = async (req: Request, res: Response) => {
   const FRONTEND_URL = "https://eat-right-fe.vercel.app";
-  res.setHeader("ngrok-skip-browser-warning", "true");
 
   try {
     const reference = (req.query as { reference?: string }).reference;
@@ -188,7 +175,6 @@ export const verifyPaymentService = async (req: Request, res: Response) => {
     });
 
     if (!subscription) {
-      res.setHeader("ngrok-skip-browser-warning", "true");
       return res.redirect(
         `${FRONTEND_URL}/client/subscription?error=${PaymentErrorCode.SUBSCRIPTION_NOT_FOUND}`
       );
@@ -237,7 +223,6 @@ export const verifyPaymentService = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Payment verification error:", error);
 
-    res.setHeader("ngrok-skip-browser-warning", "true");
     return res.redirect(
        `${FRONTEND_URL}/client/subscription?error=${PaymentErrorCode.INTERNAL_ERROR}`
     );
