@@ -9,7 +9,7 @@ import protect from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.post("/verify-payment", verifyPayment);
+router.get("/verify-payment", verifyPayment);
 router.get("/verify-payment-test", verifyPaymentTest);
 
 router.use(protect)
