@@ -58,11 +58,11 @@ model ClientProfile {
   assignedNutritionistId String?
   healthGoal             String?
   age                    Int?
-  subscription           Subscription[]        @relation("ClientSubscription")
   assignedNutritionist   NutritionistProfile? @relation("NutritionistAssignments", fields: [assignedNutritionistId], references: [id])
   user                   User                 @relation(fields: [userId], references: [id])
   healthHistory          HealthHistory[]      @relation("HealthHistory")
   mealPlans              MealPlan[]           @relation("ClientMealPlans")
+  subscription           Subscription[]       @relation("ClientSubscription")
 }
 
 model AdminProfile {
@@ -142,21 +142,21 @@ model MealPlanComment {
 
 model Subscription {
   id                String        @id @default(cuid())
-  subscriberId      String        
-  clientProfile     ClientProfile @relation("ClientSubscription", fields: [subscriberId], references: [id])
-  clientEmail         String?
+  subscriberId      String
   planName          String
   amount            Int
   billingInterval   String
   billingCycleCount Int
   currency          String        @default("NGN")
-  status            String        @default("pending") // pending | active | failed
+  status            String        @default("pending")
   reference         String?       @unique
-  startDate          DateTime?
-  endDate            DateTime?
   metadata          Json?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
+  clientEmail       String?
+  endDate           DateTime?
+  startDate         DateTime?
+  clientProfile     ClientProfile @relation("ClientSubscription", fields: [subscriberId], references: [id])
 
   @@index([subscriberId, status])
   @@index([status])

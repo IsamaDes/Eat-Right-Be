@@ -24,6 +24,9 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Apply Prisma migrations
+        run: npx prisma migrate deploy
+
       - name: Build
         run: npm run build
 
@@ -34,11 +37,6 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage/lcov.info
-
-      - name: Setup Prisma
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
 
       - name: Apply Prisma migrations
         run: npx prisma migrate deploy
